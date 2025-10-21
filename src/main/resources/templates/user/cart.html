@@ -1,104 +1,411 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	th:replace="~{layout/base::layout(~{::title}, ~{::section})}">
-<<<<<<< HEAD
 <head>
 <meta charset="UTF-8">
 <title th:fragment="title" th:text="${pageTitle}">Giỏ hàng</title>
 </head>
 <body>
-=======
+	<section th:fragment="section">
+		<div class="container py-5">
+			<div th:if="${success}"
+				class="alert alert-success alert-dismissible fade show" role="alert">
+				<i class="fas fa-check-circle me-2"></i> <span th:text="${success}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert"
+					aria-label="Close"></button>
+			</div>
 
-<head>
-<meta charset="UTF-8">
-<title th:fragment="title" th:text="${pageTitle}">Giỏ hàng</title>
-</head>
-<body>
+			<div th:if="${error}"
+				class="alert alert-danger alert-dismissible fade show" role="alert">
+				<i class="fas fa-exclamation-triangle me-2"></i> <span
+					th:text="${error}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert"
+					aria-label="Close"></button>
+			</div>
+			<div class="row">
+				<!-- Cột trái: sản phẩm -->
+				<div class="col-lg-8 mb-4">
+					<div class="card shadow-sm">
+						<div class="card-body">
+							<h4 class="mb-3">Sản phẩm trong giỏ</h4>
 
->>>>>>> branch 'PhuongNguyen' of https://github.com/Akashi169/DO-AN-CONG-NGHE-PHAN-MEM.git
-<section>
-  <div class="container py-5">
-    <div class="row">
-      <!-- Cột trái: sản phẩm -->
-      <div class="col-lg-8 mb-4">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h4 class="mb-3">Sản phẩm trong giỏ</h4>
+							<!-- Nếu giỏ trống -->
+							<div th:if="${#lists.isEmpty(cartItems)}"
+								class="text-center text-muted py-5">Giỏ hàng trống. Hãy
+								thêm sách bạn muốn mua!</div>
 
-            <!-- Nếu giỏ trống -->
-            <div th:if="${#lists.isEmpty(cartItems)}" class="text-center text-muted py-5">
-              Giỏ hàng trống. Hãy thêm sách bạn muốn mua!
-            </div>
+							<!-- Nếu có sản phẩm -->
+							<div th:if="${!#lists.isEmpty(cartItems)}">
+								<div th:each="item : ${cartItems}"
+									class="d-flex border-bottom py-3 cart-item-row">
+									<div class="me-3" style="width: 80px; height: 100px;">
+										<img
+											th:if="${item.imageUrl != null && !item.imageUrl.isEmpty()}"
+											th:src="@{'/uploads/' + ${item.imageUrl}}"
+											th:alt="${item.title}" class="img-fluid rounded shadow-sm"
+											style="width: 100%; height: 100%; object-fit: cover;">
+										<div
+											th:if="${item.imageUrl == null || item.imageUrl.isEmpty()}"
+											class="bg-secondary bg-opacity-10 rounded d-flex align-items-center justify-content-center h-100">
+											<i class="fas fa-book fa-2x text-muted"></i>
+										</div>
+									</div>
+									<div class="flex-grow-1">
+										<p class="fw-semibold mb-1" th:text="${item.title}">Tên
+											sách</p>
+										<small class="text-muted d-block mb-2"
+											th:text="${item.author}">Tác giả</small>
+										<div class="mb-2">
+											<span th:if="${item.hasDiscount != null && item.hasDiscount}">
+												<del class="text-muted me-2 small price-per-unit-original"
+													th:text="${#numbers.formatDecimal(item.originalPrice, 0, 'POINT', 0, 'POINT')} + ' ₫'">150.000
+													₫</del> <span class="fw-bold text-success price-per-unit"
+												th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'POINT')} + ' ₫'">120.000
+													₫</span>
+											</span> <span
+												th:unless="${item.hasDiscount != null && item.hasDiscount}">
+												<span class="fw-bold price-per-unit"
+												th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'POINT')} + ' ₫'">120.000
+													₫</span>
+											</span>
+										</div>
 
-            <!-- Nếu có sản phẩm -->
-            <div th:each="item : ${cartItems}" class="d-flex border-bottom py-3">
-              <div class="bg-secondary bg-opacity-10 rounded d-flex align-items-center justify-content-center me-3" 
-                   style="width: 80px; height: 100px;">
-                Bìa
-              </div>
-              <div class="flex-grow-1">
-                <p class="fw-semibold mb-1" th:text="${item.title}">Tên sách</p>
-                <small class="text-muted d-block mb-2" th:text="${item.author}">Tác giả</small>
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center gap-2">
-                    <div class="input-group input-group-sm" style="width: 120px;">
-                      <button class="btn btn-outline-secondary">-</button>
-                      <input type="text" class="form-control text-center" th:value="${item.quantity}" readonly>
-                      <button class="btn btn-outline-secondary">+</button>
-                    </div>
-                    <form th:action="@{/cart/remove}" method="post">
-                      <input type="hidden" name="id" th:value="${item.id}">
-                      <button type="submit" class="btn btn-link text-danger p-0">Xóa</button>
-                    </form>
-                  </div>
-                  <div class="fw-bold" 
-                       th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'POINT', 0, 'POINT')} + ' ₫'">
-                    0 ₫
-                  </div>
-                </div>
-              </div>
-            </div>
+										<div class="d-flex justify-content-between align-items-center">
+											<div class="d-flex align-items-center gap-2">
+												<input type="checkbox" name="selectedItems"
+													th:value="${item.id}"
+													th:checked="${selectedItems != null and selectedItems.contains(item.id)}"
+													class="me-2 item-checkbox">
+												<div class="input-group input-group-sm"
+													style="width: 120px;">
+													<button class="btn btn-outline-secondary btn-decrease"
+														type="button" th:attr="data-book-id=${item.id}">-</button>
+													<input type="number"
+														class="form-control text-center quantity-input"
+														th:value="${item.quantity}"
+														th:attr="data-book-id=${item.id}, data-max-stock=${item.stock}"
+														min="1">
+													<button class="btn btn-outline-secondary btn-increase"
+														type="button" th:attr="data-book-id=${item.id}">+</button>
+												</div>
+												<form th:action="@{/cart/remove}" method="post"
+													style="display: inline;">
+													<input type="hidden" name="id" th:value="${item.id}">
+													<button type="submit" class="btn btn-link text-danger p-0">Xóa</button>
+												</form>
+											</div>
+											<div class="fw-bold item-total-price"
+												th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'POINT', 0, 'POINT')} + ' ₫'">
+												0 ₫</div>
+											<!-- Giá gốc ẩn để JS tính toán -->
+											<span class="d-none item-price-value"
+												th:text="${#numbers.formatDecimal(item.price, 0, 'NONE', 0, 'NONE')}">0</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
-          </div>
-        </div>
-      </div>
+				<!-- Cột phải: Tóm tắt đơn hàng -->
+				<div class="col-lg-4">
+					<div class="card shadow-sm">
+						<div class="card-body">
+							<h5 class="mb-3">Tóm tắt đơn hàng</h5>
+							<div class="d-flex justify-content-between mb-2">
+								<span>Tạm tính</span> <strong id="subtotal-value">0 ₫</strong>
+							</div>
+							<div class="d-flex justify-content-between mb-2">
+								<span>Phí vận chuyển</span> <span id="shipping-value">0.000
+									₫</span>
+							</div>
+							<hr>
+							<div class="d-flex justify-content-between mb-3">
+								<span class="fw-bold">Tổng cộng</span> <strong class="fs-5"
+									id="grandtotal-value">30.000 ₫</strong>
+							</div>
 
-      <!-- Cột phải: Tóm tắt đơn hàng -->
-      <div class="col-lg-4">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="mb-3">Tóm tắt đơn hàng</h5>
-            <div class="d-flex justify-content-between mb-2">
-              <span>Tạm tính</span>
-              <strong th:text="${subtotal} + ' ₫'">0 ₫</strong>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span>Phí vận chuyển</span>
-              <span th:text="${shipping} + ' ₫'">0 ₫</span>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span>Giảm giá</span>
-              <span th:text="${discount} + ' ₫'">0 ₫</span>
-            </div>
-            <hr>
-            <div class="d-flex justify-content-between mb-3">
-              <span class="fw-bold">Tổng cộng</span>
-              <strong class="fs-5" th:text="${grandTotal} + ' ₫'">0 ₫</strong>
-            </div>
+							<form th:action="@{/checkout}" method="post" id="checkout-form">
+								<button type="submit" class="btn btn-success w-100"
+									onclick="return prepareCheckout()">Thanh toán</button>
+							</form>
+						</div>
+						<!--  ĐỊA CHỈ GIAO HÀNG -->
+						<div class="card shadow-sm mb-3">
+							<div class="card-body">
+								<div
+									class="d-flex justify-content-between align-items-center mb-3">
+									<h5 class="mb-0">Địa chỉ giao hàng</h5>
+									<a th:href="@{/user/addresses}"
+										class="btn btn-sm btn-outline-primary"> <i
+										class="fas fa-cog"></i> Quản lý
+									</a>
+								</div>
 
-            <form th:action="@{/cart/apply-coupon}" method="post" class="input-group mb-3">
-              <input type="text" name="code" class="form-control" placeholder="Mã giảm giá">
-              <button class="btn btn-primary" type="submit">Áp dụng</button>
-            </form>
+								<!-- Nếu chưa có địa chỉ -->
+								<div th:if="${#lists.isEmpty(addresses)}"
+									class="text-center py-3">
+									<i class="fas fa-map-marker-alt fa-2x text-muted mb-2"></i>
+									<p class="text-muted mb-2">Chưa có địa chỉ giao hàng</p>
+									<a th:href="@{/user/addresses/add}"
+										class="btn btn-sm btn-primary"> <i class="fas fa-plus"></i>
+										Thêm địa chỉ
+									</a>
+								</div>
 
-            <form th:action="@{/checkout}" method="post">
-              <button type="submit" class="btn btn-success w-100">Thanh toán</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+								<!-- Nếu có địa chỉ -->
+								<div th:if="${!#lists.isEmpty(addresses)}">
+									<select class="form-select" id="selected-address"
+										name="selectedAddress" required>
+										<option value="">-- Chọn địa chỉ --</option>
+										<option th:each="addr : ${addresses}" th:value="${addr.id}"
+											th:selected="${defaultAddress != null && addr.id == defaultAddress.id}"
+											th:text="${addr.hoTen} + ' - ' + ${addr.sdt} + ' - ' + ${addr.diaChiChiTiet}">
+										</option>
+									</select>
+
+									<!-- Hiển thị chi tiết địa chỉ đã chọn -->
+									<div id="address-detail" class="mt-3 p-3 bg-light rounded"
+										style="display: none;">
+										<p class="mb-1">
+											<strong id="addr-name"></strong>
+										</p>
+										<p class="mb-1">
+											<i class="fas fa-phone"></i> <span id="addr-phone"></span>
+										</p>
+										<p class="mb-0">
+											<i class="fas fa-map-marker-alt"></i> <span id="addr-full"></span>
+										</p>
+									</div>
+
+									<a th:href="@{/user/addresses/add}"
+										class="btn btn-sm btn-link mt-2"> <i class="fas fa-plus"></i>
+										Thêm địa chỉ mới
+									</a>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ========== SCRIPT ĐẶT Ở CUỐI SECTION ========== -->
+		<script th:inline="javascript">
+        /*<![CDATA[*/
+        console.log('✓ Cart script loaded!');
+        
+        // Hàm format số thành tiền VN
+        function formatCurrency(number) {
+            return number.toLocaleString('vi-VN') + ' ₫';
+        }
+
+        // Hàm parse tiền VN về số
+        function parseCurrency(text) {
+            return parseFloat(text.replace(/[^\d]/g, '')) || 0;
+        }
+
+        // Hàm cập nhật tổng tiền
+        function updateSubtotal() {
+            let subtotal = 0;
+            const rows = document.querySelectorAll('.cart-item-row');
+            
+            console.log('Updating subtotal, found', rows.length, 'items');
+            
+            rows.forEach(row => {
+                const checkbox = row.querySelector('.item-checkbox');
+                if (checkbox && checkbox.checked) {
+                    const priceValue = parseCurrency(row.querySelector('.item-price-value').textContent);
+                    const quantity = parseInt(row.querySelector('.quantity-input').value) || 0;
+                    const itemTotal = priceValue * quantity;
+                    subtotal += itemTotal;
+                    
+                    console.log('Item checked - Price:', priceValue, 'Qty:', quantity, 'Total:', itemTotal);
+                    
+                    // Cập nhật tổng tiền từng item
+                    const itemTotalElement = row.querySelector('.item-total-price');
+                    itemTotalElement.textContent = formatCurrency(itemTotal);
+                }
+            });
+
+            const shipping = 0;
+            const discount = 0;
+            const grandTotal = subtotal + shipping - discount;
+
+            document.getElementById('subtotal-value').textContent = formatCurrency(subtotal);
+            document.getElementById('grandtotal-value').textContent = formatCurrency(grandTotal);
+            
+            console.log('✓ Updated - Subtotal:', subtotal, 'GrandTotal:', grandTotal);
+        }
+
+        // Hàm gửi AJAX để update quantity
+        function updateQuantityOnServer(bookId, quantity) {
+            const formData = new URLSearchParams();
+            formData.append('maSach', bookId);
+            formData.append('quantity', quantity);
+
+            console.log('→ Sending update request - BookId:', bookId, 'Quantity:', quantity);
+
+            fetch('/cart/update-quantity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
+            })
+            .then(response => {
+                console.log('← Response status:', response.status);
+                if (response.ok) {
+                    console.log('✓ Update successful');
+                    updateSubtotal();
+                } else {
+                    console.error('✗ Update failed, status:', response.status);
+                    return response.text().then(text => {
+                        console.error('Error message:', text);
+                        alert('Không thể cập nhật số lượng: ' + text);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('✗ Fetch error:', error);
+                alert('Có lỗi xảy ra khi cập nhật số lượng!');
+            });
+        }
+
+        // Hàm tăng số lượng
+        function increaseQuantity(button) {
+            const bookId = button.getAttribute('data-book-id');
+            const input = button.parentElement.querySelector('.quantity-input');
+            const maxStock = parseInt(input.getAttribute('data-max-stock')) || 1;
+            let quantity = parseInt(input.value) || 1;
+            if (quantity < maxStock) {
+                quantity += 1;
+                input.value = quantity;
+                updateQuantityOnServer(bookId, quantity);
+            } else {
+                alert('Không đủ hàng trong kho! (Tồn: ' + maxStock + ')');
+            }
+        }
+
+        // Hàm giảm số lượng
+        function decreaseQuantity(button) {
+            const bookId = button.getAttribute('data-book-id');
+            const input = button.parentElement.querySelector('.quantity-input');
+            let quantity = parseInt(input.value) || 1;
+            if (quantity > 1) {
+                quantity -= 1;
+                input.value = quantity;
+                
+                console.log('➖ Decrease - BookId:', bookId, 'New quantity:', quantity);
+                updateQuantityOnServer(bookId, quantity);
+            } else {
+                console.log('⚠ Cannot decrease below 1');
+            }
+        }
+
+     // Cập nhật hàm prepareCheckout()
+        function prepareCheckout() {
+            const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+            
+            if (checkboxes.length === 0) {
+                alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán!');
+                return false;
+            }
+            
+            // ⭐ KIỂM TRA ĐỊA CHỈ
+            const selectedAddress = document.getElementById('selected-address');
+            if (selectedAddress && !selectedAddress.value) {
+                alert('Vui lòng chọn địa chỉ giao hàng!');
+                return false;
+            }
+            
+            const form = document.getElementById('checkout-form');
+            
+            // Xóa các hidden input cũ
+            form.querySelectorAll('input[type="hidden"]').forEach(input => input.remove());
+            
+            // Thêm selectedItems và quantities
+            checkboxes.forEach(checkbox => {
+                const row = checkbox.closest('.cart-item-row');
+                const bookId = checkbox.value;
+                const quantity = row.querySelector('.quantity-input').value;
+                
+                const inputItem = document.createElement('input');
+                inputItem.type = 'hidden';
+                inputItem.name = 'selectedItems';
+                inputItem.value = bookId;
+                form.appendChild(inputItem);
+                
+                const inputQty = document.createElement('input');
+                inputQty.type = 'hidden';
+                inputQty.name = 'quantities';
+                inputQty.value = quantity;
+                form.appendChild(inputQty);
+            });
+            
+            // ⭐ THÊM ĐỊA CHỈ
+            if (selectedAddress && selectedAddress.value) {
+                const inputAddr = document.createElement('input');
+                inputAddr.type = 'hidden';
+                inputAddr.name = 'addressId';
+                inputAddr.value = selectedAddress.value;
+                form.appendChild(inputAddr);
+            }
+            
+            console.log('✓ Checkout prepared with address:', selectedAddress ? selectedAddress.value : 'none');
+            return true;
+        }
+        // ========== KHỞI TẠO KHI TRANG LOAD ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Cart page initialized');
+            
+            // Gắn sự kiện cho nút tăng/giảm
+            document.querySelectorAll('.btn-increase').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    increaseQuantity(this);
+                });
+            });
+            
+            document.querySelectorAll('.btn-decrease').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    decreaseQuantity(this);
+                });
+            });
+            
+            // Gắn sự kiện cho checkbox
+            document.querySelectorAll('.item-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateSubtotal);
+            });
+            
+            // Gắn sự kiện cho form checkout
+            document.getElementById('checkout-form').addEventListener('submit', function(e) {
+			    if (!prepareCheckout()) {
+			        e.preventDefault();
+			    }
+			});
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('input', function () {
+                    const maxStock = parseInt(this.getAttribute('data-max-stock')) || 1;
+                    let quantity = parseInt(this.value) || 1;
+
+                    // Nếu vượt quá tồn kho
+                    if (quantity > maxStock) {
+                        alert('Không đủ hàng trong kho! (Tồn: ' + maxStock + ')');
+                        quantity = maxStock;
+                        this.value = quantity;
+                    }
+
+                    // Cập nhật server
+                    const bookId = this.getAttribute('data-book-id');
+                    updateQuantityOnServer(bookId, quantity);
+                });
+            });
+            updateSubtotal();
+        });
+        /*]]>*/
+    </script>
+	</section>
 </body>
 </html>

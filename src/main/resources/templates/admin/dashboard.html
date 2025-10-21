@@ -386,7 +386,7 @@ td.status-cell {
 										đến <span
 										th:text="${#temporals.format(promo.ngayKT, 'dd/MM/yyyy')}">31/10/2025</span>
 									</small>
-								</div> <a href="/admin/promotion/promotion-list"
+								</div> <a th:href="@{/admin/promotion/{id}(id=${promo.maKM})}"
 								class="btn btn-sm btn-outline-primary fw-semibold"> <i
 									class="bi bi-gear me-1"></i> Quản Lý
 							</a>

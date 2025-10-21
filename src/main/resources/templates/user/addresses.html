@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base::layout(~{::title}, ~{::section})}">
+<head>
+    <title th:fragment="title">Địa chỉ giao hàng</title>
+</head>
+<body>
+<section th:fragment="section">
+    <div class="container py-5">
+    	  <div class="mb-3">
+            <a th:href="@{/cart}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại giỏ hàng
+            </a>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Địa chỉ giao hàng</h2>
+            <a th:href="@{/user/addresses/add}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Thêm địa chỉ mới
+            </a>
+        </div>
+
+        <!-- Thông báo -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Danh sách địa chỉ -->
+        <div th:if="${#lists.isEmpty(addresses)}" class="text-center py-5">
+            <i class="fas fa-map-marker-alt fa-3x text-muted mb-3"></i>
+            <p class="text-muted">Bạn chưa có địa chỉ giao hàng nào</p>
+            <a th:href="@{/user/addresses/add}" class="btn btn-primary">Thêm địa chỉ đầu tiên</a>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(addresses)}" class="row">
+            <div th:each="addr : ${addresses}" class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0" th:text="${addr.hoTen}">Tên người nhận</h5>
+                            <span th:if="${addr.macDinh}" class="badge bg-success">Mặc định</span>
+                        </div>
+                        <p class="mb-1">
+                            <i class="fas fa-phone text-muted"></i> 
+                            <span th:text="${addr.sdt}">0123456789</span>
+                        </p>
+                        <p class="mb-3">
+                            <i class="fas fa-map-marker-alt text-muted"></i>
+                            <span th:text="${addr.diaChiChiTiet} + ', ' + ${addr.phuongXa} + ', ' + ${addr.quanHuyen} + ', ' + ${addr.tinhThanh}">
+                                Địa chỉ đầy đủ
+                            </span>
+                        </p>
+                        <div class="d-flex gap-2">
+                            <a th:href="@{'/user/addresses/edit/' + ${addr.id}}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i> Sửa
+                            </a>
+                            <form th:if="${!addr.macDinh}" 
+                                  th:action="@{'/user/addresses/set-default/' + ${addr.id}}" 
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-check"></i> Đặt mặc định
+                                </button>
+                            </form>
+                            <form th:if="${!addr.macDinh}" 
+                                  th:action="@{'/user/addresses/delete/' + ${addr.id}}" 
+                                  method="post" style="display: inline;"
+                                  onsubmit="return confirm('Bạn có chắc muốn xóa địa chỉ này?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

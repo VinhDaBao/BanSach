@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base::layout(~{::title}, ~{::section})}">
+<head>
+    <title th:fragment="title" th:text="${pageTitle}">Thêm địa chỉ</title>
+</head>
+<body>
+<section th:fragment="section">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="mb-4" th:text="${pageTitle}">Thêm địa chỉ mới</h3>
+                        
+                        <form th:action="${diaChi.id != null} ? @{'/user/addresses/edit/' + ${diaChi.id}} : @{/user/addresses/add}" 
+                              th:object="${diaChi}" 
+                              method="post">
+                            
+                            <div class="mb-3">
+                                <label for="hoTen" class="form-label">Họ và tên người nhận <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="hoTen" th:field="*{hoTen}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="sdt" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="sdt" th:field="*{sdt}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="tinhThanh" class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="tinhThanh" th:field="*{tinhThanh}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="quanHuyen" class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="quanHuyen" th:field="*{quanHuyen}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="phuongXa" class="form-label">Phường/Xã <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="phuongXa" th:field="*{phuongXa}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="diaChiChiTiet" class="form-label">Địa chỉ chi tiết <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="diaChiChiTiet" th:field="*{diaChiChiTiet}" rows="2" 
+                                         placeholder="Số nhà, tên đường..." required></textarea>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="macDinh" th:field="*{macDinh}">
+                                <label class="form-check-label" for="macDinh">
+                                    Đặt làm địa chỉ mặc định
+                                </label>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Lưu địa chỉ
+                                </button>
+                                <a th:href="@{/user/addresses}" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Hủy
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

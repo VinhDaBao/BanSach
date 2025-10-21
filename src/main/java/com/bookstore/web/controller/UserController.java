@@ -31,10 +31,7 @@ public class UserController {
 	@Autowired
 	private CaculatingService calculatingService;
 
-	@GetMapping("/cart")
-	public String cart() {
-		return "user/cart";
-	}
+	
 	
 	@GetMapping("/user/orderHistory")
 	public String orderHistory() {

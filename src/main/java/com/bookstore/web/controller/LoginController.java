@@ -176,7 +176,7 @@ public class LoginController {
 
 		if (user != null) {
 			session.setAttribute("loggedUser", user);
-
+			session.setAttribute("userId", user.getId());
 			// ✅ Kiểm tra vai trò (String hoặc Entity)
 			String role = user.getVaiTro() instanceof String ? user.getVaiTro().toString()
 					: user.getVaiTro(); // nếu là entity thì lấy tên vai trò
