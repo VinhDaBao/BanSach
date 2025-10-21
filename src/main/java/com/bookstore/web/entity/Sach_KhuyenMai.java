@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "sachkhuyenmai")
+@Table(name = "sach_khuyenmai")
 @IdClass(SachKhuyenMaiId.class)
 public class Sach_KhuyenMai {
     @Id
