@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danh Sách Sách - Bookstore Admin</title>
+
+<!-- Bootstrap + Icons -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+	rel="stylesheet">
+
+<style>
+body {
+	background-color: #f8f9fa;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+main {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 40px 0;
+}
+
+.content-container {
+	width: 95%;
+	max-width: 1400px;
+}
+
+.table thead th {
+	vertical-align: middle;
+}
+
+.table td.img-col {
+	width: 130px;
+}
+
+.table td.img-col img {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	border-radius: 6px;
+}
+
+td:last-child {
+	min-width: 180px;
+}
+
+footer {
+	background-color: #212529;
+	color: white;
+	text-align: center;
+	padding: 15px 0;
+	margin-top: auto;
+}
+</style>
+</head>
+<body>
+
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/admin/dashboard"> <i
+				class="bi bi-book-fill me-2"></i> Bookstore Admin
+			</a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item"><a class="nav-link active"
+						href="/admin/dashboard"> <i class="bi bi-person-circle me-1"></i>
+							Admin
+					</a></li>
+					<li class="nav-item"><a class="nav-link" href="/logout">Đăng
+							Xuất</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Main content -->
+	<main>
+		<div class="content-container">
+			<div
+				class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+				<h2>
+					<i class="bi bi-book me-2"></i>Danh Sách Sách
+				</h2>
+				<div>
+					<a class="btn btn-secondary me-2" th:href="@{/admin/dashboard}">⬅
+						Quay lại Dashboard</a> <a class="btn btn-primary"
+						th:href="@{/admin/sach/create}">+ Thêm Sách</a>
+				</div>
+			</div>
+
+			<!-- Form tìm kiếm -->
+			<div class="mb-3">
+				<form class="d-flex" th:action="@{/admin/sach}" method="get">
+					<input type="text" name="keyword" th:value="${keyword}"
+						class="form-control me-2" placeholder="Tìm theo tên sách...">
+					<button type="submit" class="btn btn-outline-primary">🔍
+						Tìm kiếm</button>
+				</form>
+			</div>
+
+			<div class="card shadow-sm">
+				<div class="card-body table-responsive">
+					<table class="table table-striped table-hover align-middle">
+						<thead class="table-dark text-center">
+							<tr>
+								<th>Mã</th>
+								<th>Ảnh</th>
+								<th>Tên Sách</th>
+								<th>Tác Giả</th>
+								<th>Giá Bán</th>
+								<th>Số Lượng Tồn</th>
+								<th>Số Trang</th>
+								<th>Năm XB</th>
+								<th>Ngày Có Hàng</th>
+								<th>Mô Tả</th>
+								<th>Trạng Thái</th>
+								<th>Hành Động</th>
+							</tr>
+						</thead>
+
+						<tbody class="text-center">
+							<tr th:each="s : ${list}">
+								<td th:text="${s.id}"></td>
+
+								<!-- Ảnh -->
+								<td class="img-col"><img th:if="${s.anh != null}"
+									th:src="@{${s.anh}}" alt="Ảnh sách" class="img-thumbnail">
+									<span th:if="${s.anh == null}">---</span></td>
+
+								<td th:text="${s.tenSP}"></td>
+								<td th:text="${s.tacGia}"></td>
+								<td
+									th:text="${#numbers.formatDecimal(s.giaBan, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
+								<td th:text="${s.soLuongTon}"></td>
+								<td th:text="${s.soTrang}"></td>
+								<td th:text="${s.namXB}"></td>
+								<td
+									th:text="${#temporals.format(s.ngayCoHang, 'dd/MM/yyyy HH:mm')}"></td>
+								<td th:text="${#strings.abbreviate(s.moTa, 60)}"></td>
+
+								<!-- Trạng thái & Toggle -->
+								<td>
+									<div class="d-flex flex-column align-items-center">
+										<!-- Hiển thị trạng thái -->
+										<span
+											th:classappend="${s.soLuongTon > 0} ? 'badge bg-success' : 'badge bg-secondary'"
+											th:text="${s.soLuongTon > 0} ? 'Đang kinh doanh' : 'Ngừng kinh doanh'">
+										</span>
+
+										<!-- Nút bật/tắt -->
+										<a th:href="@{'/admin/sach/toggle/' + ${s.id}}"
+											class="btn btn-sm mt-1"
+											th:classappend="${s.trangThai != null and s.trangThai ? 'btn-outline-danger' : 'btn-outline-success'}"
+											th:title="${s.trangThai != null and s.trangThai ? 'Ngừng kinh doanh' : 'Kích hoạt kinh doanh'}">
+											<i
+											th:classappend="${s.trangThai != null and s.trangThai ? 'bi bi-x-circle' : 'bi bi-check-circle'}"></i>
+										</a>
+									</div>
+								</td>
+
+								<!-- Hành động -->
+								<td class="text-center">
+									<div class="btn-group" role="group">
+										<a th:href="@{/admin/sach/edit/{id}(id=${s.id})}"
+											class="btn btn-sm btn-warning">✏️</a> <a
+											th:href="@{/admin/sach/detail/{id}(id=${s.id})}"
+											class="btn btn-sm btn-info">👁</a>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<!-- Pagination -->
+					<div class="d-flex justify-content-center mt-4">
+						<nav aria-label="Page navigation">
+							<ul class="pagination pagination-sm">
+								<li class="page-item"
+									th:classappend="${currentPage == 1} ? 'disabled'"><a
+									class="page-link"
+									th:href="@{/admin/sach(page=${currentPage - 1}, keyword=${keyword})}">Trước</a>
+								</li>
+
+								<li class="page-item"
+									th:each="i : ${#numbers.sequence(1, totalPages)}"
+									th:classappend="${i == currentPage} ? 'active'"><a
+									class="page-link"
+									th:href="@{/admin/sach(page=${i}, keyword=${keyword})}"
+									th:text="${i}">1</a></li>
+
+								<li class="page-item"
+									th:classappend="${currentPage == totalPages} ? 'disabled'">
+									<a class="page-link"
+									th:href="@{/admin/sach(page=${currentPage + 1}, keyword=${keyword})}">Sau</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<!-- Footer -->
+	<footer> © 2025 Bookstore Admin </footer>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

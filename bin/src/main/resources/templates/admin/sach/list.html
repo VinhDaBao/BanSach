@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/base :: layout(~{::body})">
+<body>
+<div class="container mt-4">
+    <h3>Danh sách Sách</h3>
+    <a class="btn btn-primary mb-3" th:href="@{/admin/sach/create}">+ Thêm Sách</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Mã sách</th>
+            <th>Tên sách</th>
+            <th>Tác giả</th>
+            <th>Giá bán</th>
+            <th>Nhà cung cấp</th>
+            <th>Thể loại</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="s : ${list}">
+            <td th:text="${s.maSach}"></td>
+            <td th:text="${s.tenSP}"></td>
+            <td th:text="${s.tacGia}"></td>
+            <td th:text="${s.giaBan}"></td>
+            <td th:text="${s.nhaCungCap != null ? s.nhaCungCap.tenNCC : '---'}"></td>
+            <td>
+                <span th:each="tl : ${s.theLoaiList}"
+                      th:text="${tl.tenTL}"
+                      class="badge bg-info text-dark me-1"></span>
+            </td>
+            <td>
+                <a th:href="@{/admin/sach/edit/{id}(id=${s.maSach})}"
+                   class="btn btn-sm btn-warning">Sửa</a>
+                <a th:href="@{/admin/sach/delete/{id}(id=${s.maSach})}"
+                   class="btn btn-sm btn-danger"
+                   onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{layout/base::layout(~{::title}, ~{::section})}">
+<<<<<<< HEAD
+<head>
+<meta charset="UTF-8">
+<title th:fragment="title" th:text="${pageTitle}">Giỏ hàng</title>
+</head>
+<body>
+=======
+
+<head>
+<meta charset="UTF-8">
+<title th:fragment="title" th:text="${pageTitle}">Giỏ hàng</title>
+</head>
+<body>
+
+>>>>>>> branch 'PhuongNguyen' of https://github.com/Akashi169/DO-AN-CONG-NGHE-PHAN-MEM.git
+<section>
+  <div class="container py-5">
+    <div class="row">
+      <!-- Cột trái: sản phẩm -->
+      <div class="col-lg-8 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h4 class="mb-3">Sản phẩm trong giỏ</h4>
+
+            <!-- Nếu giỏ trống -->
+            <div th:if="${#lists.isEmpty(cartItems)}" class="text-center text-muted py-5">
+              Giỏ hàng trống. Hãy thêm sách bạn muốn mua!
+            </div>
+
+            <!-- Nếu có sản phẩm -->
+            <div th:each="item : ${cartItems}" class="d-flex border-bottom py-3">
+              <div class="bg-secondary bg-opacity-10 rounded d-flex align-items-center justify-content-center me-3" 
+                   style="width: 80px; height: 100px;">
+                Bìa
+              </div>
+              <div class="flex-grow-1">
+                <p class="fw-semibold mb-1" th:text="${item.title}">Tên sách</p>
+                <small class="text-muted d-block mb-2" th:text="${item.author}">Tác giả</small>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="input-group input-group-sm" style="width: 120px;">
+                      <button class="btn btn-outline-secondary">-</button>
+                      <input type="text" class="form-control text-center" th:value="${item.quantity}" readonly>
+                      <button class="btn btn-outline-secondary">+</button>
+                    </div>
+                    <form th:action="@{/cart/remove}" method="post">
+                      <input type="hidden" name="id" th:value="${item.id}">
+                      <button type="submit" class="btn btn-link text-danger p-0">Xóa</button>
+                    </form>
+                  </div>
+                  <div class="fw-bold" 
+                       th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'POINT', 0, 'POINT')} + ' ₫'">
+                    0 ₫
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Cột phải: Tóm tắt đơn hàng -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="mb-3">Tóm tắt đơn hàng</h5>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Tạm tính</span>
+              <strong th:text="${subtotal} + ' ₫'">0 ₫</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Phí vận chuyển</span>
+              <span th:text="${shipping} + ' ₫'">0 ₫</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Giảm giá</span>
+              <span th:text="${discount} + ' ₫'">0 ₫</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between mb-3">
+              <span class="fw-bold">Tổng cộng</span>
+              <strong class="fs-5" th:text="${grandTotal} + ' ₫'">0 ₫</strong>
+            </div>
+
+            <form th:action="@{/cart/apply-coupon}" method="post" class="input-group mb-3">
+              <input type="text" name="code" class="form-control" placeholder="Mã giảm giá">
+              <button class="btn btn-primary" type="submit">Áp dụng</button>
+            </form>
+
+            <form th:action="@{/checkout}" method="post">
+              <button type="submit" class="btn btn-success w-100">Thanh toán</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

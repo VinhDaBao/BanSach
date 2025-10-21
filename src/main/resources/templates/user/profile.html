@@ -1,0 +1,69 @@
+<!-- src/main/resources/templates/profile.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+th:replace="~{layout/base::layout(~{::title}, ~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:fragment="title" th:text="${pageTitle} ?: 'Chỉnh sửa Profile'">Chỉnh sửa Profile</title>
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <div class="container profile-container">
+            <h2>Chỉnh sửa Thông tin Cá nhân</h2>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            <form th:action="@{/user/profile}" th:object="${user}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:field="*{Id}" />
+                <div class="form-group">
+                    <label for="hoTen">Họ Tên</label>
+                    <input type="text" class="form-control" id="hoTen" th:field="*{hoTen}" required>
+                </div>
+                <div class="form-group">
+                    <label for="taiKhoan">Tài Khoản</label>
+                    <input type="text" class="form-control" id="taiKhoan" th:field="*{taiKhoan}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="gioiTinh">Giới Tính</label>
+                    <select class="form-control" id="gioiTinh" th:field="*{gioiTinh}">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="diaChi">Địa Chỉ</label>
+                    <input type="text" class="form-control" id="diaChi" th:field="*{diaChi}">
+                </div>
+                <div class="form-group">
+                    <label for="sdt">Số Điện Thoại</label>
+                    <input type="text" class="form-control" id="sdt" th:field="*{sdt}">
+                </div>
+                <div class="form-group">
+                    <label for="avatar">Avatar</label>
+                    <input type="file" class="form-control" id="avatar" name="avatarFile">
+                    <img th:if="${user.avatar}" th:src="@{${user.avatar}}" alt="Avatar" width="100" class="mt-2">
+                    <input type="hidden" th:field="*{avatar}" />
+                </div>
+                <div class="form-group">
+                    <label for="matKhau">Mật Khẩu Mới (nếu muốn thay đổi)</label>
+                    <input type="password" class="form-control" id="matKhau" name="matKhau">
+                </div>
+                <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+            </form>
+        </div>
+        <script th:src="@{/js/profile.js}"></script>
+    </section>
+</body>
+</html>

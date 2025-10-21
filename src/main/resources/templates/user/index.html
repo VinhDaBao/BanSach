@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base::layout(~{::title}, ~{::section})}">
+<head>
+  <meta charset="UTF-8">
+  <title th:fragment="title" th:text="${pageTitle} ?: 'Trang chủ'">Trang chủ</title>
+</head>
+<body>
+
+<section>
+      <div class="card shadow-sm">
+                    <div class="card-header">Khuyến Mãi Đang Chạy</div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between" th:each="promo : ${activePromotions}">
+                                <span th:text="${promo.tenKM}">Giảm 10% Sách Mới</span>
+                                <a th:href="@{/user/promotion/{id}(id=${promo.maKM})}" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+  <div class="container py-4">
+    <h2 class="text-center mb-4 fw-bold">Sách ở đây nè</h2>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4" id="books-container">
+      <div th:each="sach : ${featuredBooks.content}" class="col">
+        <div th:replace="fragments/book-card :: bookCard(sach=${sach})"></div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <button id="load-more"
+              class="btn btn-primary px-4 py-2"
+              type="button"
+              th:attr="data-url=@{/products/fragment},data-offset=${#lists.size(featuredBooks.content)},data-limit=5">
+        Xem thêm
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ Script load thêm sách -->
+  <script th:src="@{/js/load-more.js}"></script>
+</section>
+
+</body>
+</html>

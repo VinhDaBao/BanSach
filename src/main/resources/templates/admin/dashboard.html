@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - Bookstore</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+	rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {
+	background-color: #f8f9fa;
+}
+
+.sidebar {
+	background-color: #ffffff;
+	border-right: 1px solid #dee2e6;
+}
+
+td.status-cell {
+	text-align: center; /* Căn giữa theo chiều ngang */
+	vertical-align: middle; /* Căn giữa theo chiều dọc */
+}
+
+.badge {
+	font-size: 0.9rem;
+	font-weight: 500;
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	margin-left: 4px; /* đẩy nhẹ sang trái */
+	border-radius: 20px; /* bo mềm hơn */
+	padding: 6px 10px; /* khung vừa khít chữ */
+}
+</style>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/admin/dashboard"><i
+				class="bi bi-book-fill me-2"></i> Bookstore Admin</a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav me-auto"></ul>
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item"><a class="nav-link"
+						href="/admin/dashboard"><i class="bi bi-person-circle me-1"></i>
+							Admin</a></li>
+					<li class="nav-item"><a class="nav-link" href="/logout">Đăng
+							Xuất</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+
+	<div class="container-fluid mt-2">
+		<!-- Giảm margin top -->
+		<div class="row">
+			<!-- Sidebar -->
+			<nav class="col-md-3 col-lg-2 bg-white sidebar p-2">
+
+				<ul class="nav flex-column">
+					<li class="nav-item"><a class="nav-link"
+						href="/admin/dashboard"><i class="bi bi-speedometer2 me-2"></i>
+							Dashboard</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/sach"><i
+							class="bi bi-bookshelf me-2"></i> Quản Lý Sách</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/ncc"><i
+							class="bi bi-bookshelf me-2"></i> Quản Lý Nhà Cung Cấp</a></li>
+					<li class="nav-item"><a class="nav-link active"
+						href="/admin/orders"><i class="bi bi-cart-check me-2"></i>
+							Quản Lý Đơn Hàng</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/users"><i
+							class="bi bi-people me-2"></i> Quản Lý Khách Hàng</a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="/admin/promotion/promotion-list"><i
+							class="bi bi-tags me-2"></i> Quản Lý Khuyến Mãi</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/tonkho"><i
+							class="bi bi-box-seam me-2"></i> Quản Lý Tồn Kho</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/thongke"><i
+							class="bi bi-bar-chart-line me-2"></i> Thống Kê</a></li>
+				</ul>
+			</nav>
+			<main class="col-md-9 col-lg-10 px-3">
+				<!-- Page Header với Filter Thời Gian -->
+				<div
+					class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<h1 class="h2">
+						<i class="bi bi-speedometer2 me-2"></i>Quản Lý Cửa Hàng Sách
+					</h1>
+					<div class="btn-toolbar mb-2 mb-md-0">
+						<div class="btn-group me-2">
+							<button type="button" class="btn btn-sm btn-outline-secondary">
+								<i class="bi bi-arrow-clockwise"></i> Làm mới dữ liệu
+							</button>
+						</div>
+						<!-- Dropdown chọn khoảng thời gian -->
+						<div class="dropdown">
+							<button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+								type="button" id="timeFilter" data-bs-toggle="dropdown">
+								<span
+									th:text="${rangeDisplay != null ? rangeDisplay : 'Hôm nay'}">Hôm
+									nay</span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end"
+								aria-labelledby="timeFilter">
+								<li><a class="dropdown-item"
+									href="/admin/dashboard?range=today">Hôm nay</a></li>
+								<li><a class="dropdown-item"
+									href="/admin/dashboard?range=week">Tuần này</a></li>
+								<li><a class="dropdown-item"
+									href="/admin/dashboard?range=month">Tháng này</a></li>
+								<li><a class="dropdown-item"
+									href="/admin/dashboard?range=year">Năm nay</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="row g-3 mb-4 text-center">
+
+					<!-- Sách Đã Bán -->
+					<div class="col-xl-3 col-md-6">
+						<div class="card stat-card bg-primary text-white shadow-sm">
+							<div
+								class="card-body d-flex flex-column justify-content-between align-items-center h-100">
+								<div
+									class="stat-header d-flex align-items-center justify-content-center mb-2">
+									<i class="bi bi-book-half me-2"></i>
+									<h5 class="card-title mb-0">
+										Sách Đã Bán (<span th:text="${rangeDisplay}">Hôm nay</span>)
+									</h5>
+								</div>
+								<h1 class="stat-value mb-0" th:text="${totalBooksSold}">0</h1>
+							</div>
+						</div>
+					</div>
+
+					<!-- Đơn Hàng Mới -->
+					<div class="col-xl-3 col-md-6">
+						<div class="card stat-card bg-warning text-white shadow-sm">
+							<div
+								class="card-body d-flex flex-column justify-content-between align-items-center h-100">
+								<div
+									class="stat-header d-flex align-items-center justify-content-center mb-2">
+									<i class="bi bi-cart-check me-2"></i>
+									<h5 class="card-title mb-0">Đơn Hàng Mới</h5>
+								</div>
+								<h1 class="stat-value mb-0" th:text="${newOrders}">0</h1>
+							</div>
+						</div>
+					</div>
+
+					<!-- Doanh Thu -->
+					<div class="col-xl-3 col-md-6">
+						<div class="card stat-card bg-success text-white shadow-sm">
+							<div
+								class="card-body d-flex flex-column justify-content-between align-items-center h-100">
+								<div
+									class="stat-header d-flex align-items-center justify-content-center mb-2">
+									<i class="bi bi-currency-exchange me-2"></i>
+									<h5 class="card-title mb-0">
+										Doanh Thu (<span th:text="${rangeDisplay}">Hôm nay</span>)
+									</h5>
+								</div>
+								<h1 class="stat-value mb-0" th:text="${dailyRevenue}">0 ₫</h1>
+							</div>
+						</div>
+					</div>
+
+					<!-- Khách Hàng -->
+					<div class="col-xl-3 col-md-6">
+						<div class="card stat-card bg-info text-white shadow-sm">
+							<div
+								class="card-body d-flex flex-column justify-content-between align-items-center h-100">
+								<div
+									class="stat-header d-flex align-items-center justify-content-center mb-2">
+									<i class="bi bi-people me-2"></i>
+									<h5 class="card-title mb-0">Khách Hàng Đăng Ký</h5>
+								</div>
+								<h1 class="stat-value mb-0" th:text="${registeredUsers}">0</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- ✅ CSS -->
+				<style>
+.stat-card {
+	height: 130px;
+	border-radius: 12px;
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+.stat-header {
+	font-size: 1.1rem;
+	font-weight: 600;
+	gap: 0.5rem;
+	white-space: nowrap; /* không rớt dòng */
+}
+
+.stat-card i {
+	font-size: 1.6rem;
+	opacity: 0.95;
+}
+
+.stat-value {
+	font-size: 2rem;
+	font-weight: 700;
+}
+</style>
+
+				<!-- Top sách yêu thích -->
+				<div class="card mb-4 shadow-sm">
+					<div class="card-header fw-bold fs-5">
+						<i class="bi bi-heart-fill me-2 text-danger"></i> Top 5 Sách Được
+						Yêu Thích Nhất
+					</div>
+
+					<div class="table-responsive">
+						<table class="table table-hover align-middle mb-0">
+							<thead class="table-light">
+								<tr class="text-center">
+									<th style="width: 10%;">Mã Sách</th>
+									<th class="text-start" style="width: 40%;">Tên Sách</th>
+									<th class="text-start" style="width: 30%;">Tác Giả</th>
+									<th style="width: 15%;">Lượt Yêu Thích</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="s : ${topFavoriteBooks}">
+									<td class="text-center" th:text="${s.maSach}">1</td>
+									<td class="fw-semibold text-start ps-3" th:text="${s.tenSach}">Tên
+										Sách</td>
+									<td class="text-start ps-3" th:text="${s.tacGia}">Tác Giả</td>
+									<td class="text-center"><i
+										class="bi bi-heart-fill text-danger me-1"></i> <span
+										th:text="${s.soLuotYeuThich}">0</span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+
+
+
+
+				<!-- Đơn Hàng Gần Đây -->
+				<div class="card shadow-sm mb-4">
+					<div class="card-header">
+						<h5>
+							<i class="bi bi-list-check me-2"></i> Đơn Hàng Gần Đây
+						</h5>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>ID Đơn</th>
+										<th>Khách Hàng</th>
+										<th>Tổng Tiền</th>
+										<th>Trạng Thái</th>
+										<th>Ngày Đặt</th>
+										<th>Hành Động</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="order : ${recentOrders}">
+										<td th:text="'#' + ${order.id}">#001</td>
+										<td th:text="${order.nguoiDung.hoTen}">Nguyễn Văn A</td>
+										<td th:text="${order.tongTien} + ' ₫'">1.200.000 ₫</td>
+										<td class="align-middle"><span
+											th:if="${order.trangThai == 'Chờ xác nhận'}"
+											class="badge rounded-pill bg-warning text-dark px-3 py-2">
+												Chờ xác nhận </span> <span
+											th:if="${order.trangThai == 'Đã xác nhận'}"
+											class="badge rounded-pill bg-success text-white px-3 py-2">
+												Đã xác nhận </span> <span th:if="${order.trangThai == 'Đã hủy'}"
+											class="badge rounded-pill bg-danger text-white px-3 py-2">
+												Đã hủy </span></td>
+
+										<td
+											th:text="${#temporals.format(order.ngayDat, 'dd/MM/yyyy')}">25/09/2025</td>
+										<td><a th:href="@{'/admin/orders/detail/' + ${order.id}}"
+											class="btn btn-sm btn-primary"> Xem Chi Tiết </a></td>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+
+
+				<div class="card shadow-sm mb-4">
+					<div
+						class="card-header d-flex justify-content-between align-items-center">
+						<h5 class="mb-0">
+							<i class="bi bi-chat-dots me-2"></i> Đánh Giá Gần Đây
+						</h5>
+						<a href="/admin/review-all" class="btn btn-sm btn-outline-primary">
+							<i class="bi bi-eye"></i> Xem tất cả
+						</a>
+					</div>
+					<div class="card-body">
+						<div class="list-group-item list-group-item-action review-item"
+							th:each="review : ${recentReviews}">
+							<div class="d-flex w-100 justify-content-between">
+								<h5 class="mb-1"
+									th:text="${review.sach.tenSP} + ' - ' + ${review.soSao} + ' Sao'">
+									Tên sách - 5 Sao</h5>
+								<small
+									th:text="${#temporals.format(review.ngayTao, 'dd/MM/yyyy HH:mm')}"></small>
+							</div>
+							<!-- ✅ Nội dung đánh giá -->
+							<p class="mb-1" th:text="${review.noiDung}">Nội dung đánh giá</p>
+							<!-- ❌ Bỏ dòng này <small class="text-muted" th:text="'Bởi ' + ${review.nguoiDung.hoTen}"></small> -->
+							<!-- ✅ Hiển thị danh sách phản hồi -->
+							<div th:if="${#lists.isEmpty(review.traLois) == false}"
+								class="mt-2 ms-3 border-start ps-3 bg-light p-2 rounded">
+								<p class="fw-bold text-secondary mb-1">Phản hồi từ quản trị
+									viên:</p>
+								<div th:each="reply : ${review.traLois}" class="mb-2">
+									<!-- ❌ Bỏ tên người phản hồi -->
+									<p class="mb-0" th:text="${reply.noiDung}">Nội dung phản
+										hồi</p>
+									<small class="text-muted"
+										th:text="${#temporals.format(reply.ngayTao, 'dd/MM/yyyy HH:mm')}"></small>
+									<button type="button"
+										class="btn btn-sm btn-outline-secondary btn-edit-reply flex-fill"
+										th:attr="data-id=${reply.id}, data-content=${reply.noiDung}">
+										<i class="bi bi-pencil"></i> Sửa
+									</button>
+									<button type="button"
+										class="btn btn-sm btn-outline-danger btn-delete-reply flex-fill"
+										th:attr="data-id=${reply.id}">
+										<i class="bi bi-trash"></i> Xóa
+									</button>
+								</div>
+							</div>
+							<!-- ✅ Nút trả lời -->
+							<button type="button"
+								class="btn btn-sm btn-outline-primary btn-reply mt-2"
+								th:attr="data-id=${review.id}">Trả Lời</button>
+						</div>
+					</div>
+				</div>
+
+
+
+				<div class="card shadow-sm">
+					<div
+						class="card-header bg-white fw-bold fs-5 d-flex align-items-center">
+						<i class="bi bi-megaphone-fill text-primary me-2 fs-4"></i> <span>Khuyến
+							Mãi Đang Chạy</span>
+					</div>
+
+					<div class="card-body">
+						<ul class="list-group list-group-flush">
+							<li
+								class="list-group-item d-flex justify-content-between align-items-center"
+								th:each="promo : ${activePromotions}">
+								<div>
+									<span class="fw-semibold" th:text="${promo.tenKM}">Giảm
+										10% Sách Mới</span> <small class="text-muted"> <i
+										class="bi bi-calendar-event me-1"></i> Từ <span
+										th:text="${#temporals.format(promo.ngayBD, 'dd/MM/yyyy')}">01/10/2025</span>
+										đến <span
+										th:text="${#temporals.format(promo.ngayKT, 'dd/MM/yyyy')}">31/10/2025</span>
+									</small>
+								</div> <a href="/admin/promotion/promotion-list"
+								class="btn btn-sm btn-outline-primary fw-semibold"> <i
+									class="bi bi-gear me-1"></i> Quản Lý
+							</a>
+							</li>
+
+							<li th:if="${#lists.isEmpty(activePromotions)}"
+								class="list-group-item text-muted text-center fst-italic">
+								Hiện chưa có chương trình khuyến mãi nào đang chạy</li>
+						</ul>
+					</div>
+				</div>
+			</main>
+		</div>
+	</div>
+	<!-- Footer -->
+	<footer class="bg-dark text-white text-center py-3 mt-4"> ©
+		2025 Bookstore Admin </footer>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+    // Lưu vị trí cuộn trước khi rời trang
+    window.addEventListener("beforeunload", function () {
+        sessionStorage.setItem("scrollPos", window.scrollY);
+    });
+
+    // Khi trang load xong thì cuộn lại vị trí cũ
+    window.addEventListener("load", function () {
+        const scrollPos = sessionStorage.getItem("scrollPos");
+        if (scrollPos) {
+            window.scrollTo(0, scrollPos);
+        }
+    });
+</script>
+
+	<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const replyButtons = document.querySelectorAll(".btn-reply");
+
+  replyButtons.forEach(button => {
+    button.addEventListener("click", function () {
+      const reviewId = this.getAttribute("data-id");
+      const reviewItem = this.closest(".review-item");
+
+      // Nếu đã có form thì không thêm nữa
+      if (reviewItem.querySelector(".reply-form")) return;
+
+      const form = document.createElement("div");
+      form.classList.add("reply-form", "mt-2");
+
+      form.innerHTML = `
+        <textarea class="form-control mb-2 reply-content" rows="2" placeholder="Nhập phản hồi..."></textarea>
+        <button class="btn btn-sm btn-success btn-send-reply" data-id="${reviewId}">Gửi</button>
+      `;
+
+      reviewItem.appendChild(form);
+
+      form.querySelector(".btn-send-reply").addEventListener("click", function () {
+        const noiDung = form.querySelector(".reply-content").value.trim();
+        if (!noiDung) return alert("Vui lòng nhập nội dung phản hồi!");
+
+        fetch(`/admin/review/reply/${reviewId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "noiDung=" + encodeURIComponent(noiDung)
+        })
+        .then(res => {
+          if (!res.ok) throw new Error('Lỗi gửi phản hồi');
+          alert("Đã gửi phản hồi!");
+          location.reload();
+        })
+        .catch(err => alert(err.message));
+      });
+    });
+  });
+});
+</script>
+
+
+	<script>
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("btn-edit-reply")) {
+    const replyId = e.target.dataset.id;
+    const oldContent = e.target.dataset.content;
+    const replyItem = e.target.closest(".mb-2");
+
+    if (replyItem.querySelector(".edit-form")) return;
+
+    const form = document.createElement("div");
+    form.classList.add("edit-form", "mt-2");
+    form.innerHTML = `
+      <textarea class="form-control mb-2 edit-content" rows="2">${oldContent}</textarea>
+      <button class="btn btn-sm btn-primary btn-update-reply" data-id="${replyId}">Cập nhật</button>
+    `;
+    replyItem.appendChild(form);
+
+    form.querySelector(".btn-update-reply").addEventListener("click", function () {
+      const noiDungMoi = form.querySelector(".edit-content").value.trim();
+      if (!noiDungMoi) return alert("Vui lòng nhập nội dung mới!");
+
+      const url = `/admin/review/reply/update/${replyId}`;
+      console.log("➡ Gửi cập nhật đến:", url, noiDungMoi);
+
+      fetch(`/admin/review/reply/update/${replyId}`, {
+    	    method: 'POST',
+    	    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    	    body: new URLSearchParams({ noiDungMoi })
+    	})
+
+      .then(res => {
+        console.log("Trạng thái HTTP:", res.status);
+        if (!res.ok) throw new Error("Lỗi cập nhật phản hồi!");
+        return res.json().catch(() => ({}));
+      })
+      .then(data => {
+        console.log("Phản hồi server:", data);
+        alert("Đã cập nhật phản hồi!");
+        location.reload();
+      })
+      .catch(err => {
+        console.error(err);
+        alert(err.message);
+      });
+    });
+  }
+});
+</script>
+	<script>
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("btn-delete-reply")) {
+    const replyId = e.target.dataset.id;
+    if (!confirm("Bạn có chắc muốn xóa phản hồi này không?")) return;
+
+    fetch(`/admin/review/reply/delete/${replyId}`, {
+    	  method: "POST"
+    	})
+    .then(res => {
+      if (!res.ok) throw new Error("Lỗi khi xóa phản hồi!");
+      return res.json().catch(() => ({}));
+    })
+    .then(data => {
+      alert("Đã xóa phản hồi!");
+      location.reload();
+    })
+    .catch(err => {
+      console.error(err);
+      alert(err.message);
+    });
+  }
+});
+</script>
+
+</body>
+</html>

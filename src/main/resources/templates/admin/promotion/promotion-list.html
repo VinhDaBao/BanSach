@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout/base}"><head>
+<meta charset="UTF-8">
+<title>Danh sách khuyến mãi</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+</head>
+<div layout:fragment="content">
+	<div th:if="${errorDate != null}" class="alert alert-danger">
+		<span th:text="${errorDate}"></span>
+	</div>
+	<div class="container-fluid pt-3 px-0">
+		<div class="card shadow-lg border-0">
+			<div
+				class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+				<h4 class="mb-0">🎁 Danh sách khuyến mãi</h4>
+				<a href="/admin/promotion/promotion-create" class="btn btn-success">➕ Thêm mới</a>
+			</div>
+
+			<div class="card-body">
+				<!-- 🔎 Thanh tìm kiếm -->
+				<form class="row g-2 mb-3" th:action="@{/admin/promotion/search}"
+					method="get">
+					<div class="col-md-4">
+						<input type="text" name="keyword" class="form-control"
+							placeholder="Tìm kiếm theo tên..." th:value="${keyword}">
+					</div>
+					<div class="col-md-2">
+						<button type="submit" class="btn btn-outline-primary w-100">🔍
+							Tìm kiếm</button>
+					</div>
+				</form>
+
+				<!-- 📋 Bảng danh sách -->
+				<table class="table table-striped align-middle text-center">
+					<thead class="table-dark">
+						<tr>
+							<th>Mã KM</th>
+							<th>Tên khuyến mãi</th>
+							<th>Ngày bắt đầu</th>
+							<th>Ngày kết thúc</th>
+							<th>Giá trị</th>
+							<th>Hành động</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="promo : ${promotions}">
+							<td th:text="${promo.maKM}"></td>
+							<td th:text="${promo.tenKM}"></td>
+							<td th:text="${#temporals.format(promo.ngayBD, 'dd/MM/yyyy')}"></td>
+							<td th:text="${#temporals.format(promo.ngayKT, 'dd/MM/yyyy')}"></td>
+							<td th:text="${promo.giaTri}"></td>
+							<td class="d-flex justify-content-center gap-2">
+								<!-- 🟦 Chi tiết -->
+								<a th:href="@{'/admin/promotion/' + ${promo.maKM}}" class="btn btn-info btn-sm text-white">📘 Chi tiết</a>
+								<!-- ✏ Sửa -->
+								<a th:href="@{'/admin/promotion/edit/' + ${promo.maKM}}" class="btn btn-warning btn-sm">✏ Sửa</a>
+								<!-- 🗑 Xóa -->
+								<a th:href="@{'/admin/promotion/delete/' + ${promo.maKM}}" class="btn btn-danger btn-sm"
+									onclick="return confirm('Bạn có chắc muốn XÓA khuyến mãi này không?');">🗑 Xóa</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<!-- 📌 Phân trang -->
+				<nav>
+					<ul class="pagination justify-content-center">
+						<li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+							<a class="page-link" th:href="@{/promotions(page=${currentPage - 1}, keyword=${keyword})}">«</a>
+						</li>
+						<li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
+							<a class="page-link" th:href="@{/promotions(page=${i}, keyword=${keyword})}" th:text="${i}"></a>
+						</li>
+						<li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+							<a class="page-link" th:href="@{/promotions(page=${currentPage + 1}, keyword=${keyword})}">»</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	</div>
+</html>

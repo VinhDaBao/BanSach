@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{layout/base::layout(~{::title}, ~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:fragment="title" th:text="${pageTitle} ?: 'Sản phẩm'">Sản phẩm</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid mt-1">
+			<div class="row">
+				<div class="col-md-2">
+					<div class="card shadow-sm p-0 mb-5 bg-body-tertiary rounded">
+						<div class="card-body">
+
+							<div class="list-group">
+								<a th:href="@{/products}"
+								   class="list-group-item list-group-item-action"
+								   th:classappend="${selectedCategoryId == null} ? 'active'">
+								   Tất cả sản phẩm
+								</a>
+								<a th:each="theLoai : ${listTheLoai}"
+								   th:href="@{'/products/category/' + ${theLoai.id}}"
+								   class="list-group-item list-group-item-action"
+								   th:text="${theLoai.tenTL}"
+								   th:classappend="${selectedCategoryId != null and theLoai.id == selectedCategoryId} ? 'active'">
+								   Tên thể loại
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="col-md-10">
+					<div class="card">
+						<div class="card-body">
+							<p class="fs-3 text-center">Tất cả sản phẩm</p>
+							<div class="row">
+
+								<div class="col-md-3" th:each="sach : ${sachPage.content}">
+									<div class="col mb-3">
+										<div class="card h-100">
+											<img class="card-img-top"
+												th:src="@{'/images/product/' + ${sach.anh}}" alt="..."
+												style="height: 300px; object-fit: cover;">
+											<div class="card-body p-4">
+												<div class="text-center">
+													<h5 class="fw-bolder" th:text="${sach.tenSP}">Tên Sách</h5>
+													<p class="text-muted" th:text="${sach.tacGia}">Tác giả</p>
+													<span
+														th:text="${#numbers.formatDecimal(sach.giaBan, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá
+														bán</span>
+												</div>
+											</div>
+											<a th:href="@{'/product-detail/' + ${sach.id}}"
+												class="stretched-link"></a>
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

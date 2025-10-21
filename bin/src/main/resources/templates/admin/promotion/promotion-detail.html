@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Chi tiết khuyến mãi</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+</head>
+<body class="bg-light">
+
+	<div class="container mt-4">
+		<a th:href="@{/admin/promotion/promotion-list}"
+			class="btn btn-secondary mb-3">⬅ Quay lại danh sách</a>
+
+		<div class="card shadow-lg border-0 mb-4">
+			<div class="card-header bg-primary text-white">
+				<h4 class="mb-0">Chi tiết khuyến mãi</h4>
+			</div>
+			<div class="card-body">
+				<p>
+					<strong>Tên khuyến mãi:</strong> <span th:text="${promotion.tenKM}">Tên
+						KM</span>
+				</p>
+				<p>
+					<strong>Thời gian:</strong> <span th:text="${promotion.ngayBD}">ngayBD</span>
+					&nbsp;→&nbsp; <span th:text="${promotion.ngayKT}">ngayKT</span>
+				</p>
+				<p
+					th:with="displayValue=${promotion.giaTri <= 1 ? (promotion.giaTri * 100) + '%': promotion.giaTri}">
+					<strong>Giá trị:</strong> <span th:text="${displayValue}">giaTri</span>
+				</p>
+			</div>
+		</div>
+
+		<div class="card shadow-lg border-0 mb-4">
+			<div class="card-header bg-success text-white">
+				<h5 class="mb-0">📚 Sách đang áp dụng</h5>
+			</div>
+			<div class="card-body">
+
+				<div th:if="${#lists.isEmpty(dsSachKM)}" class="alert alert-info">
+					Chưa có sách nào được áp dụng khuyến mãi này.</div>
+
+				<div th:if="${!#lists.isEmpty(dsSachKM)}">
+					<table class="table table-striped align-middle">
+						<thead>
+							<tr>
+								<th>Mã sách</th>
+								<th>Tên sách</th>
+								<th>Tác giả</th>
+								<th>Giá bán</th>
+								<th>Giá sau giảm</th>
+								<th>Thao tác</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="item : ${dsSachKM}">
+								<td th:text="${item.sach.id}">MaSach</td>
+								<td th:text="${item.sach.tenSP}">TenSP</td>
+								<td th:text="${item.sach.tacGia}">TacGia</td>
+								<td
+									th:text="${T(java.lang.Math).round(item.sach.giaBan.doubleValue())}">GiaBan</td>
+								<td
+									th:text="${priceAfter[item.sach.id] != null ? T(java.lang.Math).round(priceAfter[item.sach.id]) : '-'}">GiaSauGiam</td>
+								<td>
+									<form
+										th:action="@{/admin/promotion/{maKM}/remove	Book(maKM=${promotion.maKM})}"
+										method="post" style="display: inline;">
+										<input type="hidden" name="maSach" th:value="${item.sach.id}" />
+										<button type="submit" class="btn btn-danger btn-sm"
+											onclick="return confirm('Xác nhận xóa sách khỏi khuyến mãi?');">
+											Xóa</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<hr />
+
+				<h6 class="mt-3">➕ Thêm sách vào khuyến mãi</h6>
+				<form
+					th:action="@{/admin/promotion/{maKM}/addBook(maKM=${promotion.maKM})}"
+					method="post" class="d-flex gap-2 align-items-start">
+					<select name="maSach" class="form-select w-auto" required>
+						<option value="">-- Chọn sách --</option>
+						<option th:each="s : ${sachList}" th:value="${s.id}"
+							th:text="${s.tenSP}">Sách</option>
+					</select>
+					<button class="btn btn-primary">Thêm</button>
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

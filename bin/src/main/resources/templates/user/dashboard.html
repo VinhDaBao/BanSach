@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Bookstore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .sidebar { background-color: #ffffff; border-right: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><i class="bi bi-book me-2"></i> Bookstore</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/products">Sản Phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/cart">Giỏ Hàng</a></li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="/user/dashboard"><i class="bi bi-person-circle me-1"></i> Tài Khoản</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/logout">Đăng Xuất</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+           
+            <nav class="col-md-3 col-lg-2 bg-white sidebar p-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link active" href="/user/dashboard"><i class="bi bi-house-door me-2"></i> Trang Cá Nhân</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/user/orders"><i class="bi bi-cart me-2"></i> Đơn Hàng Của Tôi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/user/wishlist"><i class="bi bi-heart me-2"></i> Danh Sách Yêu Thích</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/user/reviews"><i class="bi bi-chat-dots me-2"></i> Đánh Giá Của Tôi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/user/profile"><i class="bi bi-person me-2"></i> Hồ Sơ</a></li>
+                </ul>
+            </nav>
+
+          
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Chào mừng <span th:text="${userName ?: }"></span>!</h1>
+                    
+                </div>
+
+                
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-info text-white shadow-sm">
+                            <div class="card-body">
+                                <h5>Đơn Hàng Gần Đây</h5>
+                                <h3 th:text="${recentOrders ?: 5}">5</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white shadow-sm">
+                            <div class="card-body">
+                                <h5>Danh Sách Yêu Thích</h5>
+                                <h3 th:text="${wishlistCount ?: 3}">3</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-white shadow-sm">
+                            <div class="card-body">
+                                <h5>Điểm Tích Lũy</h5>
+                                <h3 th:text="${loyaltyPoints ?: 1200}">1200</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+             
+                <div class="mb-4">
+                    <form class="d-flex" action="/search" method="get">
+                        <input class="form-control me-2" type="search" name="keyword" placeholder="Tra cứu sách (tên, tác giả, thể loại...)" aria-label="Search">
+                        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i> Tìm</button>
+                    </form>
+                </div>
+
+                <!-- Đơn Hàng Gần Đây (Thêm button Hủy nếu trạng thái cho phép) -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header">Đơn Hàng Gần Đây</div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tổng Tiền</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Ngày Đặt</th>
+                                    <th>Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               
+                                <tr>
+                                    <td>#001</td>
+                                    <td>1.200.000 ₫</td>
+                                    <td><span class="badge bg-warning">Chờ Xử Lý</span></td>
+                                    <td>25/09/2025</td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-primary">Chi Tiết</a>
+                                        <button th:if="${status == 'Chờ Xử Lý'}" class="btn btn-sm btn-danger">Hủy (Lý Do)</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Ưu Đãi Của Bạn (Thêm để khớp Nhận Ưu Đãi) -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header">Ưu Đãi & Voucher Của Bạn</div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between">Voucher Giảm 10% <button class="btn btn-sm btn-success">Lưu Mã</button></li>
+                            <li class="list-group-item d-flex justify-content-between">Khuyến Mãi Lễ <button class="btn btn-sm btn-success">Áp Dụng</button></li>
+                            <!-- Thêm th:each cho list động từ model -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Đánh Giá Của Bạn (Thêm để khớp Tương Tác Sản Phẩm) -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header">Đánh Giá Gần Đây Của Bạn</div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action">
+                                Sách A - 5 Sao: "Hay lắm!" <button class="btn btn-sm btn-outline-secondary">Chỉnh Sửa</button>
+                            </a>
+                      
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sách Gợi Ý -->
+                <div class="card shadow-sm">
+                    <div class="card-header">Sách Gợi Ý Cho Bạn</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <img src="placeholder.jpg" class="card-img-top" alt="Sách A">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Sách A</h5>
+                                        <p class="card-text">500.000 ₫</p>
+                                        <button class="btn btn-sm btn-outline-primary">Thêm Wishlist</button>
+                                        <button class="btn btn-sm btn-outline-secondary">Đánh Giá</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Thêm sách khác -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-4">
+        © 2025 Bookstore | <a href="#">Liên Hệ</a>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

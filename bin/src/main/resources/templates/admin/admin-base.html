@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+<head>
+<meta charset="UTF-8">
+<title>BookStore - Cửa Hàng Bán Sách</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+	crossorigin="anonymous">
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+	integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+	crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<div class="container px-4 px-lg-5">
+			<a class="navbar-brand" href="#!">BookStore</a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+					<li class="nav-item"><a class="nav-link active"
+						aria-current="page" href="#!"><i class="fa-solid fa-house"
+							style="color: #000000;"></i> Trang Chủ</a></li>
+					<li class="nav-item"><a class="nav-link" href="/products">Sách</a></li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" id="navbarDropdown" href="#"
+						role="button" data-bs-toggle="dropdown" aria-expanded="false">Danh Mục</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<li><a class="dropdown-item" href="#!">Tiểu Thuyết</a></li>
+							<li><hr class="dropdown-divider" /></li>
+							<li><a class="dropdown-item" href="#!">Khoa Học</a></li>
+							<li><a class="dropdown-item" href="#!">Truyện Tranh</a></li>
+							<li><a class="dropdown-item" href="#!">Sách Thiếu Nhi</a></li>
+							<li><a class="dropdown-item" href="#!">Sách Kỹ Năng</a></li>
+						</ul></li>
+				</ul>
+
+				<div class="d-flex align-items-center">
+					<div class="search-box me-3">
+						<div class="input-group">
+							<input type="text" class="form-control"
+								placeholder="Tìm kiếm sách..." id="searchInput">
+							<button class="btn btn-outline-primary" type="button">
+								<i class="fas fa-search"></i>
+							</button>
+						</div>
+					</div>
+
+					<form class="d-flex" th:action="@{/cart}" method="get">
+						<button class="btn btn-outline-dark" type="submit">
+							<i class="bi-cart-fill me-1"></i> Giỏ Hàng <span
+								class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+						</button>
+					</form>
+					<ul class="navbar-nav ms-auto mb-2 mb-lg-0 ms-lg-4">
+						<li class="nav-item dropdown"><a
+							class="nav-link dropdown-toggle" id="navbarDropdown" href="#"
+							role="button" data-bs-toggle="dropdown" aria-expanded="false">Tài Khoản</a>
+							<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+								<li><a class="dropdown-item" href="#!">Đăng Ký</a></li>
+								<li><a class="dropdown-item" href="#!">Đăng Nhập</a></li>
+							</ul></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Nội dung chính của trang chủ -->
+	<header class="bg-dark py-5">
+		<div class="container px-4 px-lg-5 my-5">
+			<div class="text-center text-white">
+				<h1 class="display-4 fw-bolder">Chào Mừng Đến Với BookStore</h1>
+				<p class="lead fw-normal text-white-50 mb-0">Khám phá thế giới sách với hàng ngàn đầu sách đa dạng</p>
+			</div>
+		</div>
+	</header>
+
+	<!-- Phần sách nổi bật -->
+	<section class="py-5">
+		<div class="container px-4 px-lg-5 mt-5">
+			<div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+				<!-- Sách 1 -->
+				<div class="col mb-5">
+					<div class="card h-100">
+						<img class="card-img-top" src="https://via.placeholder.com/450x300?text=Sach+1" alt="...">
+						<div class="card-body p-4">
+							<div class="text-center">
+								<h5 class="fw-bolder">Tiểu Thuyết Hay</h5>
+								<div class="d-flex justify-content-center small text-warning mb-2">
+									<div class="bi-star-fill"></div>
+									<div class="bi-star-fill"></div>
+									<div class="bi-star-fill"></div>
+									<div class="bi-star-fill"></div>
+									<div class="bi-star-fill"></div>
+								</div>
+								<span class="text-muted text-decoration-line-through">250.000đ</span>
+								200.000đ
+							</div>
+						</div>
+						<div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+							<div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Thêm Vào Giỏ</a></div>
+						</div>
+					</div>
+				</div>
+				<!-- Sách 2 -->
+				<div class="col mb-5">
+					<div class="card h-100">
+						<img class="card-img-top" src="https://via.placeholder.com/450x300?text=Sach+2" alt="...">
+						<div class="card-body p-4">
+							<div class="text-center">
+								<h5 class="fw-bolder">Khoa Học Viễn Tưởng</h5>
+								<div class="d-flex justify-content-center small text-warning mb-2">
+									<div class="bi-star-fill"></div>
+									<div class="bi-star-fill"></div>
+									<div class="bi-star-fill"></div>
+									<div class="bi-star-fill"></div>
+									<div class="bi-star-half"></div>
+								</div>
+								300.000đ
+							</div>
+						</div>
+						<div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+							<div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Thêm Vào Giỏ</a></div>
+						</div>
+					</div>
+				</div>
+				<!-- Thêm các sách khác tương tự -->
+			</div>
+		</div>
+	</section>
+
+	<!-- Footer -->
+	<div class="container">
+		<footer
+			class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+			<div class="col-md-4 d-flex align-items-center">
+				<a href="/"
+					class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1"
+					aria-label="BookStore"> <svg class="bi" width="30" height="24"
+						aria-hidden="true">
+							<use xlink:href="#bootstrap"></use></svg>
+				</a> <span class="mb-3 mb-md-0 text-body-secondary">© 2025 BookStore, Inc</span>
+			</div>
+			<ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+				<li class="ms-3"><a class="text-body-secondary" href="#"
+					aria-label="Instagram"><svg class="bi" width="24" height="24"
+							aria-hidden="true">
+								<use xlink:href="#instagram"></use></svg></a></li>
+				<li class="ms-3"><a class="text-body-secondary" href="#"
+					aria-label="Facebook"><svg class="bi" width="24" height="24">
+								<use xlink:href="#facebook"></use></svg></a></li>
+			</ul>
+		</footer>
+	</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+		crossorigin="anonymous"></script>
+
+</body>
+</html>

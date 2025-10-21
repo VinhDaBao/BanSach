@@ -1,0 +1,49 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="list" class="card shadow-sm mt-4">
+        <div class="card-header bg-light">
+            <h4 class="mb-0">Đánh giá & Bình luận</h4>
+        </div>
+        <div class="card-body">
+            <div th:if="${#lists.isEmpty(reviews)}" class="text-center text-muted py-3">
+                <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+            </div>
+            <div th:unless="${#lists.isEmpty(reviews)}">
+                <div th:each="review : ${reviews}" class="border-bottom mb-3 pb-3">
+                    <div class="d-flex">
+                        <img th:src="${review.nguoiDung.avatar != null} ? @{'/images/avatar/' + ${review.nguoiDung.avatar}} : 'https://via.placeholder.com/50'"
+                             class="rounded-circle me-3" alt="Avatar" width="50" height="50">
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="fw-bold mb-0" th:text="${review.nguoiDung.hoTen}">Tên người dùng</h6>
+                                <small class="text-muted"
+                                       th:text="${#temporals.format(review.ngayTao, 'dd/MM/yyyy')}"></small>
+                            </div>
+                            <div class="mb-2">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}" class="text-warning"
+                                      th:text="${i <= review.soSao} ? '★' : '☆'"></span>
+                            </div>
+                            <p th:text="${review.noiDung}">Nội dung bình luận.</p>
+                            <div th:if="${review.mediaUrls != null and !review.mediaUrls.isEmpty()}" class="mt-2 d-flex flex-wrap gap-2">
+    
+                                <th:block th:with="mediaList=${#strings.arraySplit(review.mediaUrls, ';')}">
+                                    <div th:each="mediaFile : ${mediaList}">
+                                        <img th:if="${#strings.endsWith(mediaFile.toLowerCase(), '.png') or #strings.endsWith(mediaFile.toLowerCase(), '.jpg') or #strings.endsWith(mediaFile.toLowerCase(), '.jpeg')}"
+                                             th:src="@{'/uploads/' + ${mediaFile}}" 
+                                             class="img-fluid rounded" 
+                                             style="height: 80px; width: 80px; object-fit: cover;">
+                                        <video th:if="${#strings.endsWith(mediaFile.toLowerCase(), '.mp4') or #strings.endsWith(mediaFile.toLowerCase(), '.mov')}" 
+                                               controls class="img-fluid rounded" style="max-height: 80px; max-width: 150px;">
+                                            <source th:src="@{'/uploads/' + ${mediaFile}}">
+                                        </video>
+                                    </div>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

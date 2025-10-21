@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<th:block th:fragment="cards(items)">
+  <th:block th:each="sach : ${items}">
+    <div class="col">
+      <div th:replace="fragments/book-card :: bookCard(sach=${sach})"></div>
+    </div>
+  </th:block>
+</th:block>
+</body>
+</html>

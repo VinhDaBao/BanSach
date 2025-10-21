@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin người dùng</title>
+</head>
+<body>
+<h2>Thông tin tài khoản</h2>
+
+<p>Họ tên: <span th:text="${user.hoTen}">Tên mặc định</span></p>
+<p>Tài khoản: <span th:text="${user.taiKhoan}">Tài khoản mặc định</span></p>
+<p>Giới tính: <span th:text="${user.gioiTinh}">Giới tính</span></p>
+<p>Ngày sinh: <span th:text="${user.ngaySinh}">Ngày sinh</span></p>
+<p>Địa chỉ: <span th:text="${user.diaChi}">Địa chỉ</span></p>
+<p>Số điện thoại: <span th:text="${user.sdt}">SĐT</span></p>
+<p>Vai trò: <span th:text="${user.vaiTro}">Vai trò</span></p>
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="layout/base :: layout(~{::body})">
+<body>
+	<div class="container mt-4">
+		<div class="card shadow-sm">
+			<div class="card-header bg-primary text-white">
+				<h5
+					th:text="${sach.maSach != null ? 'Chỉnh sửa Sách' : 'Thêm mới Sách'}"></h5>
+			</div>
+			<div class="card-body">
+				<form th:action="@{/admin/sach/save}" th:object="${sach}"
+					method="post">
+					<input type="hidden" th:field="*{maSach}" />
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Tên sách</label> <input
+							type="text" th:field="*{tenSP}" class="form-control"
+							placeholder="Nhập tên sách" required>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Tác giả</label> <input
+							type="text" th:field="*{tacGia}" class="form-control"
+							placeholder="Nhập tên tác giả" required>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Giá bán</label> <input
+							type="number" th:field="*{giaBan}" step="0.01"
+							class="form-control" placeholder="Nhập giá bán" required>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Mô tả</label>
+						<textarea th:field="*{moTa}" class="form-control" rows="3"
+							placeholder="Mô tả về sách"></textarea>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-bold">Ngày có hàng</label> <input
+							type="datetime-local" th:field="*{ngayCoHang}"
+							class="form-control" required>
+					</div>
+
+					<!-- Thể loại -->
+					<div class="mb-3">
+						<label class="form-label fw-bold">Thể loại</label>
+						<div class="row">
+							<div class="col-md-6" th:each="tl : ${dsTheLoai}">
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox"
+										th:value="${tl.maTL}" th:field="*{theLoais}"> <label
+										class="form-check-label" th:text="${tl.tenTL}"></label>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="d-flex justify-content-between">
+						<a th:href="@{/admin/sach}" class="btn btn-secondary">Quay lại</a>
+						<button type="submit" class="btn btn-success">💾 Lưu</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="layout/base :: layout(~{::body})">
+<body>
+	<div class="container mt-4">
+		<div class="card shadow-sm">
+			<div class="card-header bg-primary text-white">
+				<h5
+					th:text="${ncc.maNCC != null ? 'Chỉnh sửa Nhà Cung Cấp' : 'Thêm mới Nhà Cung Cấp'}"></h5>
+			</div>
+			<div class="card-body">
+				<form th:action="@{/admin/ncc/save}" th:object="${ncc}"
+					method="post">
+					<!-- Mã NCC (ẩn khi thêm mới) -->
+					<input type="hidden" th:field="*{maNCC}" />
+
+					<!-- Tên nhà cung cấp -->
+					<div class="mb-3">
+						<label class="form-label fw-bold">Tên Nhà Cung Cấp</label> <input
+							type="text" th:field="*{tenNCC}" class="form-control"
+							placeholder="Nhập tên nhà cung cấp" required>
+					</div>
+
+					<div class="d-flex justify-content-between">
+						<a th:href="@{/admin/ncc}" class="btn btn-secondary">⬅ Quay
+							lại</a>
+						<button type="submit" class="btn btn-success">💾 Lưu</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<div th:fragment="sidebar">
+		<nav class="sidebar h-100 py-3">
+			<ul class="nav flex-column">
+				<li class="nav-item"><a class="nav-link active"
+					href="/admin/dashboard"><i class="bi bi-speedometer2 me-2"></i>
+						Dashboard</a></li>
+				<li class="nav-item"><a class="nav-link" href="/admin/sach"><i
+						class="bi bi-bookshelf me-2"></i> Quản Lý Sách</a></li>
+				<li class="nav-item"><a class="nav-link" href="/admin/ncc"><i
+						class="bi bi-bookshelf me-2"></i> Quản Lý Nhà Cung Cấp</a></li>
+				<li class="nav-item"><a class="nav-link" href="/admin/orders"><i
+						class="bi bi-cart-check me-2"></i> Quản Lý Đơn Hàng</a></li>
+				<li class="nav-item"><a class="nav-link" href="/admin/users"><i
+						class="bi bi-people me-2"></i> Quản Lý Khách Hàng</a></li>
+				<li class="nav-item"><a class="nav-link"
+					href="/admin/promotion/promotion-list"><i
+						class="bi bi-tags me-2"></i> Quản Lý Khuyến Mãi</a></li>
+				<li class="nav-item"><a class="nav-link" href="/admin/tonkho"><i
+						class="bi bi-box-seam me-2"></i> Quản Lý Tồn Kho</a></li>
+				<li class="nav-item"><a class="nav-link" href="/admin/thongke"><i
+						class="bi bi-bar-chart-line me-2"></i> Thống Kê</a></li>
+
+			</ul>
+		</nav>
+	</div>
+</body>
+</html>

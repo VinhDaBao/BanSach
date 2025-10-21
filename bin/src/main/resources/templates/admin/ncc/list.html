@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="layout/base :: layout(~{::body})">
+<body>
+	<div class="container mt-4">
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h3>Danh sách Nhà Cung Cấp</h3>
+			<a class="btn btn-primary" th:href="@{/admin/ncc/create}">+ Thêm
+				NCC</a>
+		</div>
+
+		<div class="card shadow-sm">
+			<div class="card-body">
+				<table class="table table-striped table-hover">
+					<thead class="table-primary">
+						<tr>
+							<th>Mã NCC</th>
+							<th>Tên Nhà Cung Cấp</th>
+							<th>Hành động</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="n : ${list}">
+							<td th:text="${n.maNCC}"></td>
+							<td th:text="${n.tenNCC}"></td>
+							<td><a
+								th:href="@{/admin/ncc/edit/{maNCC}(maNCC=${n.maNCC})}"
+								class="btn btn-sm btn-warning">✏ Sửa</a> <a
+								th:href="@{/admin/ncc/delete/{maNCC}(maNCC=${n.maNCC})}"
+								class="btn btn-sm btn-danger"
+								onclick="return confirm('Bạn có chắc muốn xóa?')">🗑 Xóa</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{layout/base :: layout(~{::title}, ~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title th:fragment="title" th:text="${pageTitle}">Chi tiết đơn
+	hàng</title>
+</head>
+<body>
+	<section>
+		<div class="container py-5">
+			<div class="row justify-content-center">
+				<div class="col-md-8">
+					<div class="card shadow-sm">
+						<div class="card-header bg-primary text-white">
+							<h3 class="mb-0">
+								Chi tiết đơn hàng <span th:text="${order.id}">#123</span>
+							</h3>
+						</div>
+						<div class="card-body">
+							<!-- Info đơn hàng -->
+							<div class="row mb-4">
+								<div class="col-md-6">
+									<h6 class="mb-1">Ngày đặt hàng:</h6>
+									<p
+										th:text="${#temporals.format(order.ngayDat, 'dd/MM/yyyy HH:mm')}">12/10/2025
+										14:30</p>
+								</div>
+								<div class="col-md-6">
+									<h6 class="mb-1">Trạng thái:</h6>
+									<span th:switch="${order.trangThai}"
+										class="badge fs-6 rounded-pill"> <span
+										th:case="'Đã giao'" class="bg-success">Đã giao</span> <span
+										th:case="'Đang giao'" class="bg-warning text-dark">Đang
+											giao</span> <span th:case="'Đã hủy'" class="bg-danger">Đã hủy</span>
+										<span th:case="*" class="bg-secondary">Chờ xác nhận</span>
+									</span>
+								</div>
+							</div>
+
+							<div class="row mb-4">
+								<div class="col-md-6">
+									<h6 class="mb-1">Địa chỉ giao hàng:</h6>
+									<p th:text="${order.diaChi}">123 Đường ABC, Quận 1, TP.HCM</p>
+								</div>
+								<div class="col-md-6">
+									<h6 class="mb-1">Số điện thoại:</h6>
+									<p th:text="${order.sdt}">0123456789</p>
+								</div>
+							</div>
+
+							<!-- List chi tiết sản phẩm -->
+							<h5 class="mb-3">Sản phẩm trong đơn</h5>
+							<div th:each="item : ${order.chiTietDonHangs}"
+								class="d-flex align-items-center mb-3 border-bottom pb-3">
+								<img th:src="@{${item.sach.anh}}" alt="Ảnh sản phẩm"
+									class="img-fluid rounded"
+									style="width: 75px; height: 75px; object-fit: cover;">
+								<div class="flex-grow-1">
+									<h6 class="mb-1" th:text="${item.sach.tenSP}">Tên sản phẩm</h6>
+									<p class="mb-0 text-muted">
+										Số lượng: <span th:text="${item.soLuong}">1</span> | Đơn giá:
+										<span
+											th:text="${#numbers.formatDecimal(item.gia, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100.000
+											VNĐ</span>
+									</p>
+								</div>
+								<div class="text-end">
+									<p class="mb-0 fw-bold"
+										th:text="${#numbers.formatDecimal(item.gia * item.soLuong, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100.000
+										VNĐ</p>
+								</div>
+							</div>
+
+							<!-- Tổng tiền -->
+							<div class="d-flex justify-content-end mt-3">
+								<strong class="fs-4">Tổng cộng: <span
+									class="text-danger"
+									th:text="${#numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">1.000.000
+										VNĐ</span></strong>
+							</div>
+						</div>
+
+						<div class="card-footer bg-light text-center">
+							<a th:href="@{/user/orders}" class="btn btn-outline-secondary">Quay
+								lại lịch sử</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

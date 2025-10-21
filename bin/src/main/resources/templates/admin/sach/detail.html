@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Chi tiết sách</title>
+</head>
+<body>
+	<h2>Chi tiết sách</h2>
+
+	<p>
+		<b>Mã sách:</b> <span th:text="${sach.maSach}"></span>
+	</p>
+	<p>
+		<b>Tên sách:</b> <span th:text="${sach.tenSP}"></span>
+	</p>
+	<p>
+		<b>Tác giả:</b> <span th:text="${sach.tacGia}"></span>
+	</p>
+	<p>
+		<b>Giá bán:</b> <span th:text="${sach.giaBan}"></span>
+	</p>
+	<p>
+		<b>Mô tả:</b> <span th:text="${sach.moTa}"></span>
+	</p>
+	<p>
+		<b>Ngày có hàng:</b> <span th:text="${sach.ngayCoHang}"></span>
+	</p>
+	<p>
+		<b>Nhà cung cấp:</b> <span
+			th:text="${sach.nhaCungCap != null ? sach.nhaCungCap.tenNCC : '---'}"></span>
+	</p>
+	<p>
+		<b>Thể loại:</b> <span th:each="tl : ${sach.theLoaiList}"
+			th:text="${tl.tenTL}" style="margin-right: 5px;"></span>
+	</p>
+
+	<a th:href="@{/admin/sach}">⬅ Quay lại danh sách</a>
+</body>
+</html>

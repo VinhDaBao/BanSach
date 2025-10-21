@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{layout/base::layout(~{::title}, ~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title th:fragment="title" th:text="${pageTitle}">Lịch sử mua
+	hàng</title>
+</head>
+<body>
+	<section>
+		<div class="container py-5">
+			<h2 class="mb-4">Lịch Sử Mua Hàng</h2>
+
+			<div th:each="order : ${orderList}" class="card shadow-sm mb-4">
+				<div
+					class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap">
+					<div>
+						<h5 class="mb-1">
+							Đơn hàng #<span th:text="${order.id}">123</span>
+						</h5>
+						<small class="text-muted">Ngày đặt: <span
+							th:text="${#temporals.format(order.ngayDat, 'HH:mm dd/MM/yyyy')}"></span></small>
+					</div>
+					<span th:switch="${order.trangThai}"
+						class="badge fs-6 rounded-pill"> <b th:case="'Đã giao'"
+						class="bg-success text-white p-2" th:text="${order.trangThai}"></b>
+						<b th:case="'Đang giao'" class="bg-warning text-dark p-2"
+						th:text="${order.trangThai}"></b> <b th:case="'Đã hủy'"
+						class="bg-danger text-white p-2" th:text="${order.trangThai}"></b>
+						<b th:case="*" class="bg-secondary text-white p-2"
+						th:text="${order.trangThai}"></b>
+					</span>
+				</div>
+
+				<div class="card-body">
+					<div th:each="item : ${order.chiTietDonHangs}"
+						class="d-flex align-items-center mb-3 border-bottom pb-3">
+						<img th:src="@{${item.sach.anh}}" alt="Ảnh sản phẩm"
+							class="img-fluid rounded"
+							style="width: 75px; height: 75px; object-fit: cover;">
+						<div class="ms-3 flex-grow-1">
+							<h6 class="mb-1" th:text="${item.sach.tenSP}">Tên sản phẩm</h6>
+							<p class="mb-0 text-muted">
+								Số lượng: <span th:text="${item.soLuong}"></span>
+							</p>
+						</div>
+						<div class="text-end">
+							<p class="mb-0 fw-bold"
+								th:text="${#numbers.formatDecimal(item.gia * item.soLuong, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></p>
+						</div>
+					</div>
+				</div>
+
+				<div
+					class="card-footer d-flex justify-content-between align-items-center bg-light">
+					<a th:href="@{'/order-detail/' + ${order.id}}"
+						class="btn btn-outline-info btn-sm">Xem chi tiết</a> <strong
+						class="fs-5">Tổng cộng: <span class="text-danger"
+						th:text="${#numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+					</strong>
+
+					<form th:action="@{'/order/cancel/' + ${order.id}}" method="post"
+						th:if="${order.trangThai == 'Đang xử lý' or order.trangThai == 'Chờ xác nhận'}"
+						onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+						<button type="submit" class="btn btn-danger btn-sm">Hủy
+							đơn hàng</button>
+					</form>
+				</div>
+			</div>
+
+			<div th:if="${#lists.isEmpty(orderList)}"
+				class="alert alert-info text-center">Bạn chưa có đơn hàng nào.
+			</div>
+		</div>
+	</section>
+</body>
+</html>

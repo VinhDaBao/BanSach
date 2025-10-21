@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{layout/base::layout(~{::title}, ~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title th:fragment="title" th:text="${pageTitle} ?: 'Sản phẩm'">Sản phẩm</title>
+<style>
+.card-title-multi {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-height: 3.6em;
+}
+</style>
+</head>
+<body>
+	<section>
+		<div class="container-fluid mt-1">
+			<div class="row">
+				<div class="col-md-2">
+					<div class="card shadow-sm p-0 mb-5 bg-body-tertiary rounded">
+						<div class="card-body">
+							<div class="list-group">
+								<a th:href="@{/products}"
+									class="list-group-item list-group-item-action"
+									th:classappend="${selectedCategoryId == null} ? 'active'">
+									Tất cả sản phẩm </a> <a th:each="theLoai : ${listTheLoai}"
+									th:href="@{'/products/category/' + ${theLoai.id}}"
+									class="list-group-item list-group-item-action"
+									th:text="${theLoai.tenTL}"
+									th:classappend="${selectedCategoryId != null and theLoai.id == selectedCategoryId} ? 'active'">
+									Tên thể loại </a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-10">
+					<div class="card">
+						<div class="card-body">
+							<!-- <p class="fs-3 text-center">Tất cả sản phẩm</p> -->
+							<div class="row">
+								<div class="col-md-3" th:each="sach : ${sachPage.content}">
+									<div class="col mb-3">
+										<div class="card h-100 position-relative">
+											<div th:if="${sach.badgeDiscount != null}"
+												class="position-absolute top-0 start-0 m-2 z-10">
+												<span class="badge bg-danger fs-6 fw-bold"> SALE <span
+													th:text="${sach.badgeDiscount}">20% OFF</span>
+												</span>
+											</div>
+											<img class="card-img-top"
+												th:src="@{${sach.anh}}" alt="Ảnh sách"
+												style="height: 300px; object-fit: cover;">
+											<div class="card-body p-4"
+												style="height: 150px; display: flex; align-items: center; justify-content: center;">
+												<div class="text-center w-100">
+													<h5 class="fw-bolder card-title-multi mb-2"
+														style="line-height: 1.2;" th:title="${sach.tenSP}"
+														th:text="${sach.tenSP}">Tên Sách</h5>
+													<p class="text-muted mb-2" th:text="${sach.tacGia}">Tác
+														giả</p>
+
+													<div
+														class="text-muted small mb-1 d-flex align-items-center justify-content-center">
+														<div class="me-2 d-flex">
+															<i th:each="star : ${#numbers.sequence(1, 5)}"
+																th:class="${star <= sach.averageRating} ? 'fas fa-star text-warning me-1' : 'far fa-star text-muted me-1'"
+																style="font-size: 0.8rem;"></i>
+														</div>
+														<span th:if="${sach.totalReviews > 0}"
+															th:text="(${sach.totalReviews} + ' lượt')"
+															style="font-size: 0.75rem;"></span> <span
+															th:unless="${sach.totalReviews > 0}" class="text-muted"
+															style="font-size: 0.75rem;">Chưa đánh giá</span>
+													</div>
+
+													<!-- Giá (giữ nguyên) -->
+													<div th:if="${sach.badgeDiscount != null}">
+														<del class="text-muted me-2 small"
+															th:text="${#numbers.formatDecimal(sach.giaBan, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá
+															gốc</del>
+														<span class="fw-bold text-success fs-5"
+															th:text="${#numbers.formatDecimal(sach.giaGiam, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá
+															giảm</span>
+													</div>
+													<div th:unless="${sach.badgeDiscount != null}">
+														<span class="fw-bold fs-5"
+															th:text="${#numbers.formatDecimal(sach.giaBan, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá
+															bán</span>
+													</div>
+												</div>
+											</div>
+
+
+
+											<a th:href="@{'/product-detail/' + ${sach.id}}"
+												class="stretched-link" style="z-index: 1;"></a>
+										</div>
+									</div>
+								</div>
+								<nav aria-label="Pagination">
+									<ul class="pagination justify-content-center">
+										<li class="page-item"
+											th:classappend="${sachPage.first} ? 'disabled'"><a
+											class="page-link"
+											th:href="@{/products(page=${sachPage.number - 1})}">Trước</a>
+										</li>
+										<li class="page-item"
+											th:each="i : ${#numbers.sequence(1, sachPage.totalPages)}"
+											th:classappend="${i == currentPage} ? 'active'"><a
+											class="page-link" th:href="@{/products(page=${i})}"
+											th:text="${i}"></a></li>
+										<li class="page-item"
+											th:classappend="${sachPage.last} ? 'disabled'"><a
+											class="page-link"
+											th:href="@{/products(page=${sachPage.number + 1})}">Sau</a></li>
+									</ul>
+								</nav>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>
