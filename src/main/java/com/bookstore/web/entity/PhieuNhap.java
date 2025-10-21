@@ -186,7 +186,7 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name = "PhieuNhap")
+@Table(name = "phieunhap")
 public class PhieuNhap {
 
     /** Mã phiếu nhập */

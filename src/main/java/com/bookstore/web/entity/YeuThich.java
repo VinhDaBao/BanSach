@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "YeuThich")
+@Table(name = "yeuthich")
 @IdClass(YeuThichId.class) 
 public class YeuThich {
 

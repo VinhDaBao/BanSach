@@ -32,7 +32,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "NhaXB")
+@Table(name = "nhaxb")
 public class NhaXB {
 
     @Id

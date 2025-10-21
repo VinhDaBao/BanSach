@@ -169,7 +169,7 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name = "ChiTietPN")
+@Table(name = "chitietpn")
 public class ChiTietPN implements Serializable {
 
     @EmbeddedId

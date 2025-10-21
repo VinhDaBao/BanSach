@@ -59,7 +59,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "DonHang")
+@Table(name = "donhang")
 public class DonHang {
 
     @Id

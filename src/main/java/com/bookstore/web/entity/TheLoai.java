@@ -45,7 +45,7 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name = "TheLoai")
+@Table(name = "theloai")
 public class TheLoai {
 
     @Id

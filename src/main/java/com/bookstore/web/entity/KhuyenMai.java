@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "KhuyenMai")
+@Table(name = "khuyenmai")
 public class KhuyenMai {
 
     @Id

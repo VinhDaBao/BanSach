@@ -48,7 +48,7 @@ import java.math.BigDecimal;
 
 @Data
 @Entity
-@Table(name = "ChiTietDonHang")
+@Table(name = "chitietdonhang")
 public class ChiTietDonHang { 
 
     @Id

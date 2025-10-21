@@ -6,20 +6,21 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Sach_KhuyenMai")
+@Table(name = "sachkhuyenmai")
 @IdClass(SachKhuyenMaiId.class)
 public class Sach_KhuyenMai {
     @Id
+    
     private Integer maSach;
     @Id
     private Integer maKM;
 
     @ManyToOne
-    @JoinColumn(name = "maSach", insertable = false, updatable = false)
+    @JoinColumn(name = "MaSach", insertable = false, updatable = false)
     private Sach sach;
 
     @ManyToOne
-    @JoinColumn(name = "maKM", insertable = false, updatable = false)
+    @JoinColumn(name = "MaKM", insertable = false, updatable = false)
     private KhuyenMai khuyenMai;
     
 

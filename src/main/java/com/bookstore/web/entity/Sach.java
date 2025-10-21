@@ -232,7 +232,7 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name = "Sach")
+@Table(name = "sach")
 public class Sach {
 
     @Id
@@ -281,7 +281,7 @@ public class Sach {
     
     @ManyToMany
     @JoinTable(
-        name = "Sach_TheLoai",
+        name = "sach_theloai",
         joinColumns = @JoinColumn(name = "MaSach"),
         inverseJoinColumns = @JoinColumn(name = "MaTL")
     )

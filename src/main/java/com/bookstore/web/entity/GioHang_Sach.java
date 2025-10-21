@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "GioHang_Sach")
+@Table(name = "giohang_sach")
 @Data
 @IdClass(GioHangSachId.class)  // Nếu dùng composite key
 public class GioHang_Sach {

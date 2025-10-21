@@ -103,9 +103,10 @@ public class NhaCungCap {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
+	@Column(name = "MaNCC", nullable = false)
 	private Integer maNCC;
 
-	@Column(nullable = false)
+	@Column(name = "TenNCC",nullable = false)
 	private String tenNCC;
 
 	// ✅ Viết getter/setter thủ công để giữ đúng tên "maNCC", "tenNCC"
