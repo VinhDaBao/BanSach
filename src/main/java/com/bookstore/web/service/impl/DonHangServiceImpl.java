@@ -289,9 +289,9 @@ public class DonHangServiceImpl implements DonHangService {
 		if (!"Đang xử lý".equals(currentStatus) && !"Chờ xác nhận".equals(currentStatus)) {
 			throw new IllegalStateException("Không thể hủy đơn hàng ở trạng thái '" + currentStatus + "'.");
 		}
-
+		
 		donHang.setTrangThai("Đã hủy");
-
+		System.out.print("ĐANG HUỶ");
 		for (ChiTietDonHang item : donHang.getChiTietDonHangs()) {
 			Sach sach = item.getSach();
 			if (sach != null) {
@@ -299,7 +299,7 @@ public class DonHangServiceImpl implements DonHangService {
 				sachRepository.save(sach);
 			}
 		}
-
+		System.out.print("Huỷ thành công");
 		donHangRepository.save(donHang);
 	}
 

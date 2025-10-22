@@ -2,6 +2,7 @@ package com.bookstore.web.service.impl;
 
 import com.bookstore.web.config.MomoConfig;
 import com.bookstore.web.service.MomoService;
+import com.bookstore.web.service.DonHangService;
 import com.bookstore.web.service.Hmac;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -10,30 +11,37 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
 public class MomoServiceImpl implements MomoService {
-
+    @Autowired
+    private DonHangService donHangService;
     @Autowired
     private MomoConfig momoConfig;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public String createPayment(long amount) {
+    public String createPayment(long orderid, long amount) {
         try {
-            String orderId = UUID.randomUUID().toString();
+            String orderId = Long.toString(orderid) + "_" + System.currentTimeMillis();;
             String requestId = UUID.randomUUID().toString();
             String orderInfo = "Thanh toan don hang " + orderId;
+            String requestType = "captureWallet";
 
-            String rawSignature = String.format(
-                    "accessKey=%s&amount=%d&extraData=&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
-                    momoConfig.getAccessKey(), amount, momoConfig.getIpnUrl(),
-                    orderId, orderInfo, momoConfig.getPartnerCode(),
-                    momoConfig.getRedirectUrl(), requestId, "captureWallet"
-            );
-
+            String rawSignature =
+            	    "accessKey=" + momoConfig.getAccessKey() +
+            	    "&amount=" + amount +
+            	    "&extraData=" + "" +
+            	    "&ipnUrl=" + momoConfig.getIpnUrl() +
+            	    "&orderId=" + orderId +
+            	    "&orderInfo=" + orderInfo +
+            	    "&partnerCode=" + momoConfig.getPartnerCode() +
+            	    "&redirectUrl=" + momoConfig.getRedirectUrl() +
+            	    "&requestId=" + requestId +
+            	    "&requestType=" + requestType;
             String signature = Hmac.hmacSHA256(momoConfig.getSecretKey(), rawSignature);
 
             Map<String, Object> body = new LinkedHashMap<>();
@@ -73,7 +81,7 @@ public class MomoServiceImpl implements MomoService {
         // 0 = success, khác 0 = fail
         if (resultCode == 0) {
             System.out.println("Thanh toán thành công cho đơn hàng: " + orderId);
-            // TODO: cập nhật trạng thái đơn hàng trong DB
+            donHangService.updateStatus(Integer.parseInt(orderId), "Đã xác nhận");
             return true;
         } else {
             System.out.println("Thanh toán thất bại cho đơn hàng: " + orderId);
@@ -92,7 +100,6 @@ public class MomoServiceImpl implements MomoService {
 
             if (resultCode != null && resultCode == 0) {
                 System.out.println("✅ [IPN] Thanh toán thành công cho đơn hàng: " + orderId);
-                // TODO: cập nhật DB
             } else {
                 System.out.println("❌ [IPN] Thanh toán thất bại cho đơn hàng: " + orderId);
             }

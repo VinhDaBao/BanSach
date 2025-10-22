@@ -52,19 +52,30 @@
 				</div>
 
 				<div
-					class="card-footer d-flex justify-content-between align-items-center bg-light">
-					<a th:href="@{'/order-detail/' + ${order.id}}"
-						class="btn btn-outline-info btn-sm">Xem chi tiết</a> <strong
-						class="fs-5">Tổng cộng: <span class="text-danger"
+					class="card-footer d-flex justify-content-between align-items-center bg-light flex-wrap">
+
+					<div class="d-flex gap-2">
+						<a th:href="@{'/order-detail/' + ${order.id}}"
+							class="btn btn-outline-info btn-sm">Xem chi tiết</a>
+
+						<!-- Nút Hủy đơn -->
+						<form th:action="@{'/order/cancel/' + ${order.id}}" method="post"
+							th:if="${order.trangThai == 'Đang xử lý' or order.trangThai == 'Chờ xác nhận'}"
+							onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+							<button type="submit" class="btn btn-danger btn-sm">Hủy
+								đơn hàng</button>
+						</form>
+
+						<!-- ✅ Nút Thanh toán (chỉ hiện khi trạng thái là 'Chờ xác nhận') -->
+						<a th:if="${order.trangThai == 'Chờ xác nhận'}"
+							th:href="@{/payment/create(orderId=${order.id})}"
+							class="btn btn-success btn-sm"> Thanh toán </a>
+					</div>
+
+					<strong class="fs-5 mt-2 mt-md-0"> Tổng cộng: <span
+						class="text-danger"
 						th:text="${#numbers.formatDecimal(order.tongTien, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
 					</strong>
-
-					<form th:action="@{'/order/cancel/' + ${order.id}}" method="post"
-						th:if="${order.trangThai == 'Đang xử lý' or order.trangThai == 'Chờ xác nhận'}"
-						onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
-						<button type="submit" class="btn btn-danger btn-sm">Hủy
-							đơn hàng</button>
-					</form>
 				</div>
 			</div>
 

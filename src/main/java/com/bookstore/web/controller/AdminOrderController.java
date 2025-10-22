@@ -103,8 +103,14 @@ import com.bookstore.web.service.DonHangService;
 @RequestMapping("/admin")
 public class AdminOrderController {
 
+	private final AdminChiTietPNController adminChiTietPNController;
+
 	@Autowired
 	private DonHangService donHangService;
+
+	AdminOrderController(AdminChiTietPNController adminChiTietPNController) {
+		this.adminChiTietPNController = adminChiTietPNController;
+	}
 
 	// 📦 Danh sách đơn hàng có phân trang + lọc trạng thái
 	@GetMapping("/orders")
@@ -146,8 +152,24 @@ public class AdminOrderController {
 	public String updateStatus(@PathVariable Integer id, @RequestParam String newStatus,
 			RedirectAttributes redirectAttributes) {
 		try {
-			donHangService.updateStatus(id, newStatus);
-			redirectAttributes.addFlashAttribute("success", "Cập nhật trạng thái thành công: " + newStatus);
+			DonHang order = donHangService.findById(id);
+			if (order == null) {
+			    redirectAttributes.addFlashAttribute("error", "Không tìm thấy đơn hàng");
+			    return "redirect:/admin/orders";
+			}
+			String currentStatus = order.getTrangThai().trim();
+			if (currentStatus.equalsIgnoreCase("Đã huỷ") || currentStatus.equalsIgnoreCase("Đã hủy")) {
+			    redirectAttributes.addFlashAttribute("error", "Đơn hàng đã bị huỷ, không thể cập nhật nữa!");
+			    return "redirect:/admin/orders";
+			}
+
+			if (newStatus.trim().equalsIgnoreCase("Đã huỷ") || newStatus.trim().equalsIgnoreCase("Đã hủy")) {
+			    donHangService.cancelOrder(id);
+			    redirectAttributes.addFlashAttribute("success", "Đơn hàng đã được huỷ!");
+			} else {
+			    donHangService.updateStatus(id, newStatus.trim());
+			    redirectAttributes.addFlashAttribute("success", "Cập nhật trạng thái thành công: " + newStatus);
+			}
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("error", "Lỗi khi cập nhật trạng thái: " + e.getMessage());
 		}

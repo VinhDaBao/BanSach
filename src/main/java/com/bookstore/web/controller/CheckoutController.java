@@ -25,6 +25,7 @@ import com.bookstore.web.repository.GioHangRepository;
 import com.bookstore.web.repository.GioHangSachRepository;
 import com.bookstore.web.repository.SachRepository;
 import com.bookstore.web.service.DiaChiService;
+import com.bookstore.web.service.MomoService;
 import com.bookstore.web.service.SachService;
 
 import jakarta.servlet.http.HttpSession;
@@ -53,6 +54,9 @@ public class CheckoutController {
     
     @Autowired 
     private DiaChiService diaChiService;
+    
+    @Autowired 
+    private MomoService momoService;
 
     @PostMapping("/checkout")
     @Transactional
@@ -200,8 +204,8 @@ public class CheckoutController {
             
             redirectAttributes.addFlashAttribute("success", 
                 "Đặt hàng thành công! Mã đơn hàng: #" + savedOrder.getId());
-            
-            return "redirect:/products";
+
+            return "redirect:/payment/create?orderId=" + savedOrder.getId();
             
         } catch (Exception e) {
             e.printStackTrace();
