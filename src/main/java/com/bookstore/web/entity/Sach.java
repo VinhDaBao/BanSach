@@ -213,6 +213,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -259,6 +261,7 @@ public class Sach {
     private String anh;
 
     @Column(name = "NgayCoHang", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") 
     private LocalDateTime ngayCoHang;
 
     
