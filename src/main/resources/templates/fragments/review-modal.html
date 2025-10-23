@@ -1,160 +1,147 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-	<div th:fragment="modal" class="modal fade" id="reviewModal"
-		tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
-		<style>
-.star-rating {
-	display: inline-flex;
-	flex-direction: row-reverse;
-	gap: 8px;
-	font-size: 0;
-	justify-content: center;
-}
+    <div th:fragment="modal">
+        <!-- Modal for Adding New Reviews -->
+        <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form th:action="@{/reviews/add}" method="post" enctype="multipart/form-data">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reviewModalLabel">Viết đánh giá cho sản phẩm</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="bookId" th:value="${sach.id}">
+                            <div class="mb-3 text-center">
+                                <label class="form-label d-block fw-bold">Đánh giá của bạn:</label>
+                                <div class="star-rating">
+                                    <input type="radio" id="5-stars" name="rating" value="5" required />
+                                    <label for="5-stars" class="star" title="Tuyệt vời">★</label>
+                                    <input type="radio" id="4-stars" name="rating" value="4" />
+                                    <label for="4-stars" class="star" title="Tốt">★</label>
+                                    <input type="radio" id="3-stars" name="rating" value="3" />
+                                    <label for="3-stars" class="star" title="Khá">★</label>
+                                    <input type="radio" id="2-stars" name="rating" value="2" />
+                                    <label for="2-stars" class="star" title="Tệ">★</label>
+                                    <input type="radio" id="1-star" name="rating" value="1" />
+                                    <label for="1-star" class="star" title="Rất tệ">★</label>
+                                </div>
+                                <small class="text-muted d-block mt-2" id="rating-text">Chọn số sao để đánh giá</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label fw-bold">Nhận xét chi tiết:</label>
+                                <textarea class="form-control" id="comment" name="comment" rows="4"
+                                    placeholder="Sản phẩm này có tốt không? Bạn thích hay không thích điểm nào?" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reviewImage" class="form-label">Đính kèm ảnh/video (có thể chọn nhiều):</label>
+                                <input class="form-control" type="file" id="reviewImage" name="imageFiles"
+                                    accept="image/*, video/*" multiple>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-.star-rating input[type="radio"] {
-	display: none;
-}
+        <!-- Modal for Editing Reviews -->
+        <!-- Modal for Editing Reviews -->
+<div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form th:action="@{/reviews/update}" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editReviewLabel">Sửa đánh giá</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="reviewId" name="reviewId">
+                    
+                    <div class="mb-3 text-center">
+                        <label class="form-label d-block fw-bold">Đánh giá của bạn:</label>
+                        <div class="star-rating">
+                            <!-- ⭐ ĐÚNG ID: edit-5-stars, edit-4-stars, etc. -->
+                            <input type="radio" id="edit-5-stars" name="rating" value="5" required />
+                            <label for="edit-5-stars" class="star" title="Tuyệt vời">★</label>
+                            
+                            <input type="radio" id="edit-4-stars" name="rating" value="4" />
+                            <label for="edit-4-stars" class="star" title="Tốt">★</label>
+                            
+                            <input type="radio" id="edit-3-stars" name="rating" value="3" />
+                            <label for="edit-3-stars" class="star" title="Khá">★</label>
+                            
+                            <input type="radio" id="edit-2-stars" name="rating" value="2" />
+                            <label for="edit-2-stars" class="star" title="Tệ">★</label>
+                            
+                            <input type="radio" id="edit-1-star" name="rating" value="1" />
+                            <label for="edit-1-star" class="star" title="Rất tệ">★</label>
+                        </div>
+                        <small class="text-muted d-block mt-2" id="edit-rating-text">Chọn số sao để đánh giá</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit-comment" class="form-label fw-bold">Nhận xét chi tiết:</label>
+                        <textarea class="form-control" id="edit-comment" name="comment" rows="4"
+                            placeholder="Sản phẩm này có tốt không? Bạn thích hay không thích điểm nào?" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit-reviewImage" class="form-label">Đính kèm ảnh/video mới (tùy chọn):</label>
+                        <input class="form-control" type="file" id="edit-reviewImage" name="imageFiles"
+                            accept="image/*, video/*" multiple>
+                        <small class="text-muted">Nếu chọn ảnh mới, ảnh cũ sẽ bị thay thế</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-.star-rating label {
-	cursor: pointer;
-	font-size: 2.5rem;
-	color: #e0e0e0;
-	transition: all 0.2s ease;
-	position: relative;
-}
-
-.star-rating label:hover {
-	transform: scale(1.2);
-}
-
-/* Khi hover vào sao, tô màu sao đó và tất cả các sao bên phải (do flex-direction: row-reverse) */
-.star-rating label:hover, .star-rating label:hover ~ label {
-	color: #ffc107;
-	text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
-}
-
-/* Khi đã chọn sao, tô màu sao đó và tất cả các sao có giá trị thấp hơn */
-.star-rating input[type="radio"]:checked ~ label {
-	color: #ffc107;
-	text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
-}
-
-#rating-text {
-	font-size: 1rem;
-	min-height: 24px;
-}
-</style>
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<form th:action="@{/reviews/add}" method="post"
-					enctype="multipart/form-data">
-					<div class="modal-header">
-						<h5 class="modal-title" id="reviewModalLabel">Viết đánh giá
-							cho sản phẩm</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal"
-							aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<input type="hidden" name="bookId" th:value="${sach.id}">
-
-						<div class="mb-3 text-center">
-							<label class="form-label d-block fw-bold">Đánh giá của
-								bạn:</label>
-							<div class="star-rating">
-								<input type="radio" id="5-stars" name="rating" value="5"
-									required /> <label for="5-stars" class="star"
-									title="Tuyệt vời">★</label> <input type="radio" id="4-stars"
-									name="rating" value="4" /> <label for="4-stars" class="star"
-									title="Tốt">★</label> <input type="radio" id="3-stars"
-									name="rating" value="3" /> <label for="3-stars" class="star"
-									title="Khá">★</label> <input type="radio" id="2-stars"
-									name="rating" value="2" /> <label for="2-stars" class="star"
-									title="Tệ">★</label> <input type="radio" id="1-star"
-									name="rating" value="1" /> <label for="1-star" class="star"
-									title="Rất tệ">★</label>
-							</div>
-							<small class="text-muted d-block mt-2" id="rating-text">Chọn
-								số sao để đánh giá</small>
-						</div>
-
-						<div class="mb-3">
-							<label for="comment" class="form-label fw-bold">Nhận xét
-								chi tiết:</label>
-							<textarea class="form-control" id="comment" name="comment"
-								rows="4"
-								placeholder="Sản phẩm này có tốt không? Bạn thích hay không thích điểm nào?"
-								required></textarea>
-						</div>
-						<div class="mb-3">
-							<label for="reviewImage" class="form-label">Đính kèm
-								ảnh/video (có thể chọn nhiều):</label> <input class="form-control"
-								type="file" id="reviewImage" name="imageFiles"
-								accept="image/*, video/*" multiple>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary"
-							data-bs-dismiss="modal">Hủy</button>
-						<button type="submit" class="btn btn-primary">Gửi đánh
-							giá</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ratingInputs = document.querySelectorAll('input[name="rating"]');
-        const ratingText = document.getElementById('rating-text');
-        const starLabels = document.querySelectorAll('.star-rating label');
-        
-        const ratingTexts = {
-            '1': 'Rất tệ ⭐',
-            '2': 'Tệ ⭐⭐',
-            '3': 'Khá ⭐⭐⭐',
-            '4': 'Tốt ⭐⭐⭐⭐',
-            '5': 'Tuyệt vời ⭐⭐⭐⭐⭐'
-        };
-        
-        // Khi click chọn sao
-        ratingInputs.forEach(input => {
-            input.addEventListener('change', function() {
-                if (ratingText) {
-                    ratingText.textContent = ratingTexts[this.value];
-                    ratingText.style.color = '#ffc107';
-                    ratingText.style.fontWeight = 'bold';
-                }
-            });
-        });
-        
-        // Khi hover - Do thứ tự bị reverse nên sao đầu (index 0) = 5 sao
-        starLabels.forEach((label, index) => {
-            label.addEventListener('mouseenter', function() {
-                if (ratingText) {
-                    const value = 5 - index; // Đảo ngược: index 0 = 5 sao, index 4 = 1 sao
-                    ratingText.textContent = ratingTexts[value.toString()];
-                    ratingText.style.color = '#ffc107';
-                }
-            });
-        });
-        
-        // Khôi phục text khi rời chuột
-        const starRating = document.querySelector('.star-rating');
-        if (starRating && ratingText) {
-            starRating.addEventListener('mouseleave', function() {
-                const checkedInput = document.querySelector('input[name="rating"]:checked');
-                if (checkedInput) {
-                    ratingText.textContent = ratingTexts[checkedInput.value];
-                    ratingText.style.color = '#ffc107';
-                    ratingText.style.fontWeight = 'bold';
-                } else {
-                    ratingText.textContent = 'Chọn số sao để đánh giá';
-                    ratingText.style.color = '';
-                    ratingText.style.fontWeight = '';
-                }
-            });
-        }
-    });
-</script>
+        <!-- Shared CSS for Star Ratings -->
+        <style>
+            .star-rating {
+                display: inline-flex;
+                flex-direction: row-reverse;
+                gap: 8px;
+                font-size: 0;
+                justify-content: center;
+            }
+            .star-rating input[type="radio"] {
+                display: none;
+            }
+            .star-rating label {
+                cursor: pointer;
+                font-size: 2.5rem;
+                color: #e0e0e0;
+                transition: all 0.2s ease;
+                position: relative;
+            }
+            .star-rating label:hover {
+                transform: scale(1.2);
+            }
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #ffc107;
+                text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+            }
+            .star-rating input[type="radio"]:checked ~ label {
+                color: #ffc107;
+                text-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+            }
+            #rating-text,
+            #edit-rating-text {
+                font-size: 1rem;
+                min-height: 24px;
+            }
+        </style>
+    </div>
 </body>
 </html>

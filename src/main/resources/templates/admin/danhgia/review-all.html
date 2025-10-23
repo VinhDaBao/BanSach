@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản Lý Đánh Giá & Phản Hồi - Bookstore Admin</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+	rel="stylesheet">
+<style>
+body {
+	background-color: #f8f9fa;
+}
+
+.sidebar {
+	background-color: #ffffff;
+	border-right: 1px solid #dee2e6;
+}
+
+h1, h3 {
+	color: #333;
+}
+
+.card {
+	border-radius: 8px;
+}
+
+.reply-form .form-control {
+	font-size: 0.9rem;
+}
+
+footer {
+	background-color: #212529;
+	color: white;
+	text-align: center;
+	padding: 10px 0;
+	margin-top: 20px;
+}
+
+.pagination {
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.review-image {
+	max-width: 100px;
+	height: auto;
+	border-radius: 4px;
+	margin-top: 10px;
+	margin-right: 10px;
+	display: inline-block;
+}
+
+.media-grid {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.media-grid video {
+	max-width: 200px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+.star {
+	color: #ffc107;
+	font-size: 1.2rem;
+	transition: transform 0.2s;
+}
+
+.star:hover {
+  transform: scale(1.2);
+  color: #ffb400;
+}
+
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #000; /* màu đen đậm */
+    margin-bottom: 0.3rem;
+}
+
+
+.card-title:hover {
+    color: #0056b3;
+    transform: translateX(4px);
+}
+
+.card-title.text-primary {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+
+.text-muted strong {
+    color: #495057;
+}
+
+</style>
+</head>
+<body>
+	<!-- TOPBAR -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/admin/dashboard"> <i
+				class="bi bi-book-fill me-2"></i> Bookstore Admin
+			</a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav me-auto"></ul>
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item"><a class="nav-link"
+						href="/admin/dashboard"> <i class="bi bi-person-circle me-1"></i>
+							Admin
+					</a></li>
+					<li class="nav-item"><a class="nav-link" href="/logout">Đăng
+							Xuất</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container-fluid mt-2">
+		<div class="row">
+			<!-- SIDEBAR -->
+			<nav class="col-md-3 col-lg-2 sidebar p-2">
+				<ul class="nav flex-column">
+					<li class="nav-item"><a class="nav-link"
+						href="/admin/dashboard"><i class="bi bi-speedometer2 me-2"></i>
+							Dashboard</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/sach"><i
+							class="bi bi-bookshelf me-2"></i> Quản Lý Sách</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/ncc"><i
+							class="bi bi-truck me-2"></i> Quản Lý Nhà Cung Cấp</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/orders"><i
+							class="bi bi-cart-check me-2"></i> Quản Lý Đơn Hàng</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/users"><i
+							class="bi bi-people me-2"></i> Quản Lý Khách Hàng</a></li>
+					<li class="nav-item"><a class="nav-link"
+						href="/admin/promotion/promotion-list"><i
+							class="bi bi-tags me-2"></i> Quản Lý Khuyến Mãi</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/tonkho"><i
+							class="bi bi-box-seam me-2"></i> Quản Lý Tồn Kho</a></li>
+					<li class="nav-item"><a class="nav-link active"
+						href="/admin/danhgia"><i class="bi bi-chat-dots me-2"></i>
+							Quản Lý Đánh Giá</a></li>
+					<li class="nav-item"><a class="nav-link" href="/admin/thongke"><i
+							class="bi bi-bar-chart-line me-2"></i> Thống Kê</a></li>
+				</ul>
+			</nav>
+
+			<!-- MAIN CONTENT -->
+			<main class="col-md-9 col-lg-10 px-3">
+				<div
+					class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<h1 class="h2">
+						<i class="bi bi-chat-dots me-2"></i> Quản Lý Đánh Giá & Phản Hồi
+					</h1>
+				</div>
+
+				<div th:if="${#lists.isEmpty(allReviews)}"
+					class="alert alert-warning shadow-sm">Chưa có đánh giá nào.</div>
+
+				<!-- Danh sách đánh giá -->
+				<div th:each="review : ${allReviews}" class="card mb-4 shadow-sm">
+					<div class="card-body">
+						<div
+							class="d-flex justify-content-between align-items-center mb-2">
+							<h5 class="card-title" th:text="${review.sach.tenSP}"></h5>
+							<div class="text-warning">
+								<span th:each="i : ${#numbers.sequence(1, 5)}"
+									th:classappend="${i <= (review.soSao != null ? review.soSao : 0)} ? 'bi bi-star-fill star' : 'bi bi-star'">
+								</span>
+							</div>
+
+						</div>
+						<!-- Hiển thị người dùng -->
+						<p class="mb-1 text-muted">
+							<i class="bi bi-person-circle me-1"></i> <strong
+								th:text="${review.nguoiDung != null ? review.nguoiDung.hoTen : 'Người dùng ẩn danh'}"></strong>
+						</p>
+						<p class="card-text text-secondary" th:text="${review.noiDung}"></p>
+
+						<!-- Ảnh / video -->
+						<div class="media-grid mt-2" th:if="${review.mediaUrls}">
+							<div
+								th:each="url : ${#strings.arraySplit(review.mediaUrls, ';')}"
+								th:with="trimmedUrl=${#strings.trim(url)}">
+								<img
+									th:if="${#strings.endsWith(trimmedUrl, '.jpg') or #strings.endsWith(trimmedUrl, '.png') or #strings.endsWith(trimmedUrl, '.jpeg')}"
+									th:src="@{'/uploads/' + ${trimmedUrl}}" class="review-image"
+									alt="Hình ảnh đánh giá">
+								<video th:if="${#strings.endsWith(trimmedUrl, '.mp4')}" controls
+									th:src="@{'/uploads/' + ${trimmedUrl}}" class="review-video"></video>
+							</div>
+						</div>
+
+						<small class="text-muted d-block mt-2"
+							th:text="${#temporals.format(review.ngayTao, 'dd/MM/yyyy HH:mm')}"></small>
+
+						<!-- PHẢN HỒI -->
+						<div class="mt-3">
+							<h6 class="text-secondary">Phản hồi của quản trị viên</h6>
+							<div th:if="${#lists.isEmpty(review.traLois)}"
+								class="text-muted small mb-2">Chưa có phản hồi nào.</div>
+
+							<!-- Danh sách phản hồi -->
+							<div th:each="reply : ${review.traLois}"
+								class="border rounded p-2 mb-2 bg-light">
+								<p class="mb-1" th:text="${reply.noiDung}"></p>
+								<small class="text-muted"
+									th:text="${#temporals.format(reply.ngayTao, 'dd/MM/yyyy HH:mm')}"></small>
+								<div class="mt-2">
+									<button type="button"
+										class="btn btn-sm btn-outline-secondary btn-edit-reply"
+										th:attr="data-id=${reply.id}, data-content=${reply.noiDung}">
+										<i class="bi bi-pencil"></i> Sửa
+									</button>
+									<button type="button"
+										class="btn btn-sm btn-outline-danger btn-delete-reply"
+										th:attr="data-id=${reply.id}">
+										<i class="bi bi-trash"></i> Xóa
+									</button>
+								</div>
+							</div>
+
+							<!-- Form thêm phản hồi -->
+							<form class="reply-form mt-3"
+								th:attr="data-review-id=${review.id}">
+								<div class="input-group">
+									<input type="text" class="form-control reply-input"
+										placeholder="Nhập phản hồi...">
+									<button class="btn btn-primary btn-send-reply" type="button">
+										<i class="bi bi-send"></i> Gửi
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<!-- PAGINATION -->
+				<nav aria-label="Page navigation" th:if="${totalPages > 1}">
+					<ul class="pagination">
+						<li class="page-item"
+							th:classappend="${currentPage == 0} ? 'disabled' : ''"><a
+							class="page-link"
+							th:href="@{/admin/danhgia(page=${currentPage - 1})}">«</a></li>
+						<li class="page-item"
+							th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+							th:classappend="${currentPage == i} ? 'active' : ''"><a
+							class="page-link" th:href="@{/admin/danhgia(page=${i})}"
+							th:text="${i + 1}"></a></li>
+						<li class="page-item"
+							th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+							<a class="page-link"
+							th:href="@{/admin/danhgia(page=${currentPage + 1})}">»</a>
+						</li>
+					</ul>
+				</nav>
+			</main>
+		</div>
+	</div>
+
+
+	<!-- SCRIPT -->
+	<script>
+    // Gửi phản hồi mới
+    document.addEventListener("click", async (e) => {
+        if (e.target.closest(".btn-send-reply")) {
+            const form = e.target.closest(".reply-form");
+            const reviewId = form.dataset.reviewId;
+            const input = form.querySelector(".reply-input");
+            const noiDung = input.value.trim();
+            if (!noiDung) return alert("Vui lòng nhập nội dung phản hồi!");
+
+            const res = await fetch(`/admin/danhgia/reply/${reviewId}?noiDung=${encodeURIComponent(noiDung)}`, {
+                method: "POST"
+            });
+            if (res.ok) {
+                alert("Đã gửi phản hồi!");
+                location.href = '/admin/danhgia?page=0';
+            } else {
+                alert("Lỗi khi gửi phản hồi!");
+            }
+        }
+    });
+
+    // Sửa phản hồi
+    document.addEventListener("click", async (e) => {
+        if (e.target.closest(".btn-edit-reply")) {
+            const btn = e.target.closest(".btn-edit-reply");
+            const id = btn.dataset.id;
+            const oldContent = btn.dataset.content;
+            const noiDungMoi = prompt("Nhập nội dung mới:", oldContent);
+            if (!noiDungMoi || noiDungMoi === oldContent) return;
+
+            const formData = new FormData();
+            formData.append("noiDungMoi", noiDungMoi);
+
+            const res = await fetch(`/admin/danhgia/reply/update/${id}`, {
+                method: "POST",
+                body: formData
+            });
+
+            if (res.ok) {
+                alert("Cập nhật thành công!");
+                location.href = '/admin/danhgia?page=0';
+            } else {
+                alert("Lỗi khi cập nhật phản hồi!");
+            }
+        }
+    });
+
+    // Xóa phản hồi
+    document.addEventListener("click", async (e) => {
+        if (e.target.closest(".btn-delete-reply")) {
+            const id = e.target.closest(".btn-delete-reply").dataset.id;
+            if (!confirm("Bạn có chắc muốn xóa phản hồi này không?")) return;
+
+            const res = await fetch(`/admin/danhgia/reply/delete/${id}`, {
+                method: "POST"
+            });
+            if (res.ok) {
+                alert("Đã xóa phản hồi!");
+                location.href = '/admin/danhgia?page=0';
+            } else {
+                alert("Lỗi khi xóa phản hồi!");
+            }
+        }
+    });
+    </script>
+</body>
+</html>

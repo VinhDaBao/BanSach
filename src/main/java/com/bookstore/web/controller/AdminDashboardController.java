@@ -80,7 +80,7 @@ public class AdminDashboardController {
 			break;
 		}
 
-		// ✅ Tên hiển thị trên giao diện
+		//  Tên hiển thị trên giao diện
 		String rangeDisplay;
 		switch (range) {
 		case "week":
@@ -97,29 +97,29 @@ public class AdminDashboardController {
 			break;
 		}
 
-		// ✅ Gửi nhãn hiển thị sang view
+		//  Gửi nhãn hiển thị sang view
 		model.addAttribute("rangeDisplay", rangeDisplay);
 
-		// ✅ Sách đã bán
+		//  Sách đã bán
 		long totalBooksSold = donHangService.countBooksSoldBetween(startDate, now);
 
-		// ✅ Doanh thu
+		//  Doanh thu
 		double revenue = donHangService.sumRevenueBetween(startDate, now);
 
-		// ✅ Đơn hàng mới
+		//  Đơn hàng mới
 		long newOrders = donHangService.countOrdersBetween(startDate, now);
 
-		// ✅ Khách hàng đăng ký
+		// Khách hàng đăng ký
 		long registeredUsers = nguoiDungService.countRegisteredBetween(startDate, now);
 
 		NumberFormat numberFormat = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
-		// ✅ Gửi dữ liệu sang view
+		// Gửi dữ liệu sang view
 		model.addAttribute("totalBooksSold", totalBooksSold);
 		model.addAttribute("newOrders", newOrders);
 		model.addAttribute("dailyRevenue", numberFormat.format(revenue) + " ₫");
 		model.addAttribute("registeredUsers", registeredUsers);
 
-		// ✅ Đánh giá gần đây
+		//  Đánh giá gần đây
 		List<DanhGia> recentReviews = danhGiaService.getRecentReviews(3);
 		model.addAttribute("recentReviews", recentReviews);
 
@@ -145,7 +145,7 @@ public class AdminDashboardController {
 		return "admin/danhgia/reply-form";
 	}
 
-	// ✅ Trang chi tiết đơn hàng
+	//  Trang chi tiết đơn hàng
 	@GetMapping("orders/detail/{id}")
 	public String viewOrderDetail(@PathVariable("id") Integer id, Model model) {
 		DonHang order = donHangService.findById(id);

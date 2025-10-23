@@ -35,5 +35,10 @@ public interface DanhGiaRepository extends JpaRepository<DanhGia, Integer> {
 	@Query("SELECT DISTINCT dg FROM DanhGia dg LEFT JOIN FETCH dg.traLois ORDER BY dg.ngayTao DESC")
 	List<DanhGia> findAllWithReplies();
 
+    boolean existsByNguoiDung_IdAndSach_Id(Integer userId, Integer bookId);
+    
+    @Query("SELECT COUNT(dg) > 0 FROM DanhGia dg WHERE dg.nguoiDung.id = :userId AND dg.sach.id = :sachId")
+    boolean checkUserReviewExists(@Param("userId") Integer userId, @Param("sachId") Integer sachId);
+
 	
 }

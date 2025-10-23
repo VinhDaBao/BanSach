@@ -3,9 +3,12 @@ package com.bookstore.web.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bookstore.web.entity.DanhGia;
 import com.bookstore.web.entity.DiaChi;
 import com.bookstore.web.repository.DiaChiRepository;
 import com.bookstore.web.service.DiaChiService;
@@ -62,4 +65,5 @@ public class DiaChiServiceImpl implements DiaChiService {
             diaChiRepository.save(addr);
         }
     }
+
 }

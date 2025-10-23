@@ -1,4 +1,4 @@
-  <html xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
 	th:replace="~{layout/base::layout(~{::title}, ~{::section})}">
 <head>
 <meta charset="UTF-8">
@@ -11,16 +11,19 @@
 	crossorigin="anonymous">
 <link th:href="@{/css/style.css}" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <style>
-        .error {
-            color: red;
-        }
-        .success {
-            color: green;
-        }
-    </style>
+<link
+	href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+	rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<style>
+.error {
+	color: red;
+}
+
+.success {
+	color: green;
+}
+</style>
 </head>
 <body>
 	<section>
@@ -232,42 +235,72 @@
 												th:disabled="${sach.soLuongTon == 0}" />
 										</div>
 										<div class="d-flex flex-wrap gap-2">
-											<a th:href="@{/cart/add(maSach=${sach.id}, soLuong=${#strings.isEmpty(quantity) ? 1 : quantity}, userId=${session.userId}, returnUrl='/product-detail/' + ${sach.id})}"
-                                           class="btn btn-primary btn-lg" th:disabled="${sach.soLuongTon == 0}">
-												<span th:if="${sach.soLuongTon == 0}">Hết hàng</span> <span
-													th:unless="${sach.soLuongTon == 0}">Thêm vào giỏ
-													hàng</span>
-											</a>
-											<a th:href="@{/products}"
+											<a
+												th:href="@{/cart/add(maSach=${sach.id}, soLuong=${#strings.isEmpty(quantity) ? 1 : quantity}, userId=${session.userId}, returnUrl='/product-detail/' + ${sach.id})}"
+												class="btn btn-primary btn-lg"
+												th:disabled="${sach.soLuongTon == 0}"> <span
+												th:if="${sach.soLuongTon == 0}">Hết hàng</span> <span
+												th:unless="${sach.soLuongTon == 0}">Thêm vào giỏ hàng</span>
+											</a> <a th:href="@{/products}"
 												class="btn btn-outline-secondary btn-lg">Quay lại</a>
-											<button type="button" class="btn btn-danger btn-lg"
-												data-bs-toggle="modal" data-bs-target="#reviewModal">
-												<i class="fas fa-pencil-alt me-2"></i>Viết đánh giá
-											</button>
+											<div th:if="${session.loggedUser == null}">
+												<button type="button" class="btn btn-danger btn-lg"
+													onclick="openReviewModal()">
+													<i class="fas fa-pen me-1"></i> Viết đánh giá
+												</button>
+											</div>
+
+											<!-- Trường hợp 2: Đã đăng nhập, chưa mua -->
+											<div th:if="${session.loggedUser != null and !hasPurchased}">
+												<button type="button" class="btn btn-secondary btn-lg"
+													disabled>
+													<i class="fas fa-lock me-1"></i> Viết đánh giá
+												</button>
+												<small class="text-danger d-block mt-2"> <i
+													class="fas fa-exclamation-triangle"></i> Bạn cần mua sách
+													 để đánh giá
+												</small>
+											</div>
+
+											<!-- Trường hợp 3: Đã mua, đã đánh giá rồi -->
+											<div
+												th:if="${session.loggedUser != null and hasPurchased and hasReviewed}">
+												<button type="button" class="btn btn-success btn-lg"
+													disabled>
+													<i class="fas fa-check me-1"></i> Đã đánh giá
+												</button>
+												<small class="text-success d-block mt-2"> <i
+													class="fas fa-check-circle"></i> Bạn đã đánh giá sách này
+												</small>
+											</div>
+
+											<!-- Trường hợp 4: Đã mua, chưa đánh giá - CHO PHÉP ĐÁNH GIÁ -->
+											<div th:if="${session.loggedUser != null and canReview}">
+												<button type="button" class="btn btn-danger btn-lg"
+													onclick="openReviewModal()">
+													<i class="fas fa-pen me-1"></i> Viết đánh giá
+												</button>
+												<small class="text-success d-block mt-2"> <i
+													class="fas fa-check-circle"></i> Bạn đã mua sách này, hãy
+													chia sẻ đánh giá nhé!
+												</small>
+											</div>
 										</div>
 									</form>
 
-									<div th:if="${session.loggedUser != null}" class="btn-group"
-										role="group">
-										<form th:action="@{/favorite/toggle/{id}(id=${sach.id})}"
-											method="post" style="display: inline;">
-											<button type="submit" class="btn btn-outline-danger btn-lg"
-												th:classappend="${sach.isFavorite} ? 'btn-danger text-white' : 'btn-outline-danger'">
-												<i class="fas fa-heart"
-													th:classappend="${sach.isFavorite} ? 'fas text-white' : 'far text-muted'"></i>
-												<span th:if="${sach.isFavorite}">Bỏ yêu thích</span> <span
-													th:unless="${sach.isFavorite}">Yêu thích</span>
-											</button>
-										</form>
-									</div>
-									<div th:unless="${session.loggedUser != null}">
-										<button type="button" class="btn btn-outline-secondary btn-lg"
-											disabled title="Đăng nhập để yêu thích">
-											<i class="far fa-heart text-muted"></i> Yêu thích
-										</button>
-									</div>
+									<button type="button" class="btn btn-outline-danger btn-lg"
+										onclick="toggleFavorite()"
+										th:attr="data-book-id=${sach.id}, data-is-favorite=${sach.isFavorite ?: false}">
+										<i
+											th:class="${sach.isFavorite ? 'fas' : 'far'} + ' fa-heart me-1'"></i>
+										<span
+											th:text="${sach.isFavorite ? 'Đã yêu thích' : 'Yêu thích'}">Yêu
+											thích</span>
+									</button>
+
 								</div>
 								<div th:replace="~{fragments/review-list :: list}"></div>
+
 							</div>
 						</div>
 					</div>
@@ -275,8 +308,12 @@
 			</div>
 			<div th:replace="~{fragments/review-modal :: modal}"></div>
 		</div>
-	</section>
-	<script>
+
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+			crossorigin="anonymous"></script>
+		<script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.favorite-btn').forEach(btn => {
         btn.addEventListener('click', function(event) {
@@ -317,13 +354,135 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-		integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
-		integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS"
-		crossorigin="anonymous"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+			integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+			crossorigin="anonymous"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
+			integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS"
+			crossorigin="anonymous"></script>
+		<!-- ⭐ THÊM SCRIPT NÀY VÀO CUỐI FILE product-detail.html -->
+		<script th:inline="javascript">
+    /*<![CDATA[*/
+    
+    // ⭐ KIỂM TRA USER ĐÃ ĐĂNG NHẬP CHƯA
+    const isLoggedIn = /*[[${session.loggedUser != null}]]*/ false;
+    
+    // Hàm mở modal viết đánh giá (kiểm tra đăng nhập)
+    function openReviewModal() {
+        if (!isLoggedIn) {
+            if (confirm('Vui lòng đăng nhập để đánh giá. Bạn có muốn đăng nhập ngay không?')) {
+                window.location.href = '/login';
+            }
+            return;
+        }
+        
+        const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+        modal.show();
+    }
+    function toggleFavorite() {
+        if (!isLoggedIn) {
+            if (confirm('Vui lòng đăng nhập để yêu thích sản phẩm. Bạn có muốn đăng nhập ngay không?')) {
+                window.location.href = '/login';
+            }
+            return;
+        }
+        
+        const button = event.currentTarget;
+        const bookId = button.getAttribute('data-book-id');
+        const isFavorite = button.getAttribute('data-is-favorite') === 'true';
+        
+        fetch('/favorite/toggle/' + bookId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                const icon = button.querySelector('i');
+                const text = button.querySelector('span');
+                
+                if (isFavorite) {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    text.textContent = 'Yêu thích';
+                    button.setAttribute('data-is-favorite', 'false');
+                } else {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    text.textContent = 'Đã yêu thích';
+                    button.setAttribute('data-is-favorite', 'true');
+                }
+            } else {
+                alert('Có lỗi xảy ra. Vui lòng thử lại!');
+            }
+        })
+        .catch(error => {
+            alert('Có lỗi xảy ra: ' + error);
+        });
+    }
+    
+    
+    // Hàm mở modal sửa đánh giá
+    function openEditModal(button) {
+        const reviewId = button.getAttribute('data-review-id');
+        const rating = button.getAttribute('data-rating');
+        const content = button.getAttribute('data-content');
+        
+        const modalElement = document.getElementById('editReviewModal');
+        if (!modalElement) {
+            alert('Không tìm thấy modal sửa đánh giá. Vui lòng tải lại trang!');
+            return;
+        }
+        
+        const reviewIdInput = document.getElementById('reviewId');
+        const commentTextarea = document.getElementById('edit-comment');
+        
+        if (reviewIdInput) reviewIdInput.value = reviewId;
+        if (commentTextarea) commentTextarea.value = content;
+        
+        const allRadios = modalElement.querySelectorAll('input[type="radio"][name="rating"]');
+        allRadios.forEach(function(radio) {
+            if (radio.value === rating) radio.checked = true;
+        });
+        
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('#reviewModal input[name="rating"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                updateRatingText('rating-text', this.value);
+            });
+        });
+        
+        document.querySelectorAll('#editReviewModal input[name="rating"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                updateRatingText('edit-rating-text', this.value);
+            });
+        });
+    });
+    
+    function updateRatingText(elementId, rating) {
+        const textMap = {
+            '1': 'Rất tệ ⭐',
+            '2': 'Tệ ⭐⭐',
+            '3': 'Khá ⭐⭐⭐',
+            '4': 'Tốt ⭐⭐⭐⭐',
+            '5': 'Tuyệt vời ⭐⭐⭐⭐⭐'
+        };
+        
+        const textElement = document.getElementById(elementId);
+        if (textElement) {
+            textElement.textContent = textMap[rating] || 'Chọn số sao để đánh giá';
+        }
+    }
+    
+    /*]]>*/
+</script>
+	</section>
 </body>
 </html>

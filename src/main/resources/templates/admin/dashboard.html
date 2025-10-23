@@ -87,6 +87,9 @@ td.status-cell {
 							class="bi bi-tags me-2"></i> Quản Lý Khuyến Mãi</a></li>
 					<li class="nav-item"><a class="nav-link" href="/admin/tonkho"><i
 							class="bi bi-box-seam me-2"></i> Quản Lý Tồn Kho</a></li>
+					<li class="nav-item"><a class="nav-link active"
+						href="/admin/danhgia"><i class="bi bi-chat-dots me-2"></i>
+							Quản Lý Đánh Giá</a></li>
 					<li class="nav-item"><a class="nav-link" href="/admin/thongke"><i
 							class="bi bi-bar-chart-line me-2"></i> Thống Kê</a></li>
 				</ul>
@@ -99,11 +102,7 @@ td.status-cell {
 						<i class="bi bi-speedometer2 me-2"></i>Quản Lý Cửa Hàng Sách
 					</h1>
 					<div class="btn-toolbar mb-2 mb-md-0">
-						<div class="btn-group me-2">
-							<button type="button" class="btn btn-sm btn-outline-secondary">
-								<i class="bi bi-arrow-clockwise"></i> Làm mới dữ liệu
-							</button>
-						</div>
+						
 						<!-- Dropdown chọn khoảng thời gian -->
 						<div class="dropdown">
 							<button class="btn btn-sm btn-outline-secondary dropdown-toggle"
@@ -312,22 +311,27 @@ td.status-cell {
 
 				<div class="card shadow-sm mb-4">
 					<div
-						class="card-header d-flex justify-content-between align-items-center">
-						<h5 class="mb-0">
+						class="card-header d-flex justify-content-between align-items-center bg-white">
+						<h5 class="mb-0 fw-bold text-dark">
 							<i class="bi bi-chat-dots me-2"></i> Đánh Giá Gần Đây
 						</h5>
-						<a href="/admin/review-all" class="btn btn-sm btn-outline-primary">
+						<a href="/admin/danhgia" class="btn btn-sm btn-outline-primary">
 							<i class="bi bi-eye"></i> Xem tất cả
 						</a>
 					</div>
+
 					<div class="card-body">
 						<div class="list-group-item list-group-item-action review-item"
 							th:each="review : ${recentReviews}">
-							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1"
-									th:text="${review.sach.tenSP} + ' - ' + ${review.soSao} + ' Sao'">
-									Tên sách - 5 Sao</h5>
-								<small
+							<div
+								class="d-flex justify-content-between align-items-center mb-2">
+								<h5 class="card-title fw-bold mb-0 text-dark">
+									<span th:text="${review.sach.tenSP}"></span> <span
+										class="text-warning ms-2"> <i class="bi bi-star-fill"
+										th:each="i : ${#numbers.sequence(1, review.soSao)}"></i>
+									</span>
+								</h5>
+								<small class="text-muted"
 									th:text="${#temporals.format(review.ngayTao, 'dd/MM/yyyy HH:mm')}"></small>
 							</div>
 							<!-- ✅ Nội dung đánh giá -->
@@ -363,6 +367,7 @@ td.status-cell {
 						</div>
 					</div>
 				</div>
+
 
 
 

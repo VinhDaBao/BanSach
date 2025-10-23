@@ -178,32 +178,83 @@ public interface SachRepository extends JpaRepository<Sach, Integer> {
 	List<Object[]> getRevenueByCategoryInRange(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to,
 			@Param("status") String status);
 
+//	@Query(value = """
+//	        SELECT 
+//	            s.MaSach,
+//	            s.tenSP,
+//	            s.tacGia,
+//	            GROUP_CONCAT(DISTINCT tl.TenTL SEPARATOR ', ') AS theLoai,
+//	            nxb.TenNXB,
+//	            s.giaBan,
+//	            (COALESCE(SUM(ctdh.soLuong), 0) + s.soLuongTon) AS soLuongNhap,
+//	            COALESCE(SUM(ctdh.soLuong), 0) AS soLuongBan,
+//	            s.soLuongTon AS conLai,
+//	            s.NgayCoHang,
+//	            CASE
+//	                WHEN s.soLuongTon <= 10 THEN 'Thấp'
+//	                WHEN s.soLuongTon <= 30 THEN 'Sắp hết'
+//	                ELSE 'Ổn định'
+//	            END AS trangThai
+//	        FROM sach s
+//	        LEFT JOIN ChiTietDonHang ctdh ON ctdh.MaSach = s.MaSach
+//	        LEFT JOIN Sach_TheLoai stl ON s.MaSach = stl.MaSach
+//	         LEFT JOIN TheLoai tl ON stl.MaTL = tl.MaTL
+//	        LEFT JOIN NhaXB nxb ON s.MaNXB = nxb.MaNXB
+//	        GROUP BY s.MaSach, s.tenSP, s.tacGia, nxb.TenNXB, s.giaBan, s.soLuongTon, s.NgayCoHang
+//	    """, nativeQuery = true)
+//	List<Object[]> getDetailedStockReport();
+//
 	@Query(value = """
-	        SELECT 
-	            s.MaSach,
-	            s.tenSP,
-	            s.tacGia,
-	            GROUP_CONCAT(DISTINCT tl.TenTL SEPARATOR ', ') AS theLoai,
-	            nxb.TenNXB,
-	            s.giaBan,
-	            (COALESCE(SUM(ctdh.soLuong), 0) + s.soLuongTon) AS soLuongNhap,
-	            COALESCE(SUM(ctdh.soLuong), 0) AS soLuongBan,
-	            s.soLuongTon AS conLai,
-	            s.NgayCoHang,
-	            CASE
-	                WHEN s.soLuongTon <= 10 THEN 'Thấp'
-	                WHEN s.soLuongTon <= 30 THEN 'Sắp hết'
-	                ELSE 'Ổn định'
-	            END AS trangThai
-	        FROM sach s
-	        LEFT JOIN ChiTietDonHang ctdh ON ctdh.MaSach = s.MaSach
-	        LEFT JOIN Sach_TheLoai stl ON s.MaSach = stl.MaSach
-	         LEFT JOIN TheLoai tl ON stl.MaTL = tl.MaTL
-	        LEFT JOIN NhaXB nxb ON s.MaNXB = nxb.MaNXB
-	        GROUP BY s.MaSach, s.tenSP, s.tacGia, nxb.TenNXB, s.giaBan, s.soLuongTon, s.NgayCoHang
-	    """, nativeQuery = true)
-	List<Object[]> getDetailedStockReport();
+		    SELECT
+		        s.MaSach,
+		        s.tenSP,
+		        s.tacGia,
+		        GROUP_CONCAT(DISTINCT tl.TenTL SEPARATOR ', ') AS theLoai,
+		        nxb.TenNXB,
+		        s.giaBan,
 
-	
+		        -- tổng nhập từ chitietpn
+		        COALESCE(tpn.soLuongNhap, 0) AS soLuongNhap,
+
+		        -- tổng bán từ chitietdonhang (chỉ đơn đã xác nhận)
+		        COALESCE(tbh.soLuongBan, 0) AS soLuongBan,
+
+		        -- còn lại = nhập - bán (không âm)
+		        GREATEST(COALESCE(tpn.soLuongNhap, 0) - COALESCE(tbh.soLuongBan, 0), 0) AS conLai,
+
+		        s.NgayCoHang,
+
+		        -- trạng thái dựa trên conLai vừa tính
+		        CASE
+		            WHEN GREATEST(COALESCE(tpn.soLuongNhap, 0) - COALESCE(tbh.soLuongBan, 0), 0) <= 10 THEN 'Thấp'
+		            WHEN GREATEST(COALESCE(tpn.soLuongNhap, 0) - COALESCE(tbh.soLuongBan, 0), 0) <= 30 THEN 'Sắp hết'
+		            ELSE 'Ổn định'
+		        END AS trangThai
+
+		    FROM sach s
+
+		    -- derived table tổng nhập
+		    LEFT JOIN (
+		        SELECT MaSach, SUM(SoLuong) AS soLuongNhap
+		        FROM chitietpn
+		        GROUP BY MaSach
+		    ) tpn ON tpn.MaSach = s.MaSach
+
+		    -- derived table tổng bán (chỉ đơn đã xác nhận)
+		    LEFT JOIN (
+		        SELECT ctdh.MaSach, SUM(ctdh.SoLuong) AS soLuongBan
+		        FROM chitietdonhang ctdh
+		        JOIN donhang dh ON ctdh.MaDH = dh.MaDH
+		        WHERE dh.TrangThai = 'Đã xác nhận'
+		        GROUP BY ctdh.MaSach
+		    ) tbh ON tbh.MaSach = s.MaSach
+
+		    LEFT JOIN sach_theloai stl ON s.MaSach = stl.MaSach
+		    LEFT JOIN theloai tl ON stl.MaTL = tl.MaTL
+		    LEFT JOIN nhaxb nxb ON s.MaNXB = nxb.MaNXB
+
+		    GROUP BY s.MaSach, s.tenSP, s.tacGia, nxb.TenNXB, s.giaBan, s.NgayCoHang
+		    """, nativeQuery = true)
+		List<Object[]> getDetailedStockReport();
 
 }

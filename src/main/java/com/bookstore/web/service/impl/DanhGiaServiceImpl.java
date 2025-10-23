@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.bookstore.web.dto.RatingStatsDTO;
@@ -23,6 +25,11 @@ public class DanhGiaServiceImpl implements DanhGiaService {
     @Override
     public List<DanhGia> findBySachId(Integer sachId) {
         return danhGiaRepository.findBySach_IdOrderByNgayTaoDesc(sachId);
+    }
+    public boolean hasUserReviewedBook(Integer userId, Integer bookId) {
+        boolean exists = danhGiaRepository.existsByNguoiDung_IdAndSach_Id(userId, bookId);
+        System.out.println(">>> hasUserReviewedBook(" + userId + ", " + bookId + ") = " + exists);
+        return exists;
     }
 
     @Override
@@ -92,4 +99,12 @@ public class DanhGiaServiceImpl implements DanhGiaService {
         return danhGiaRepository.findAll();
     }
     
+    @Override
+    public Page<DanhGia> findAllByOrderByNgayTaoDesc(Pageable pageable) {
+        return danhGiaRepository.findAllByOrderByNgayTaoDesc(pageable);
+    }
+    @Override
+    public void deleteById(Integer id) {
+        danhGiaRepository.deleteById(id);
+    }
 }

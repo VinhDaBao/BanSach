@@ -39,7 +39,11 @@
 							class="img-fluid rounded"
 							style="width: 75px; height: 75px; object-fit: cover;">
 						<div class="ms-3 flex-grow-1">
-							<h6 class="mb-1" th:text="${item.sach.tenSP}">Tên sản phẩm</h6>
+							<h6 class="mb-1">
+								<a th:href="@{'/product-detail/' + ${item.sach.id}}"
+									class="text-decoration-none text-dark"
+									th:text="${item.sach.tenSP}"> Tên sản phẩm </a>
+							</h6>
 							<p class="mb-0 text-muted">
 								Số lượng: <span th:text="${item.soLuong}"></span>
 							</p>

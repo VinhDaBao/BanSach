@@ -184,7 +184,7 @@ public class LoginController {
 			if (role != null && role.equalsIgnoreCase("admin")) {
 				return "redirect:/admin/dashboard";
 			} else if (role != null && role.equalsIgnoreCase("user")) {
-				return "redirect:/products";
+				return "redirect:/";
 			} else {
 				model.addAttribute("error", "Vai trò không được phép truy cập!");
 				return "auth/login";
@@ -198,7 +198,7 @@ public class LoginController {
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		session.invalidate();
-		return "redirect:/products";
+		return "redirect:/";
 	}
 
 	@GetMapping("/register")

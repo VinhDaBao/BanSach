@@ -112,10 +112,19 @@ public interface DonHangRepository extends JpaRepository<DonHang, Integer> {
 			""")
 	List<Object[]> findCustomerOrderStats();
 
-//	// Tổng doanh thu trong khoảng ngày theo trạng thái
-//	@Query("SELECT SUM(d.tongTien) FROM DonHang d WHERE d.trangThai = :status AND d.ngayTao BETWEEN :from AND :to")
-//	Double sumRevenueByDateRangeAndStatus(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to,
-//			@Param("status") String status);
+	boolean existsByNguoiDung_IdAndChiTietDonHangs_Sach_IdAndTrangThai(Integer userId, Integer bookId,
+			String trangThai);
+
+    @Query("SELECT COUNT(dh) > 0 FROM DonHang dh " +
+            "JOIN dh.chiTietDonHangs ct " +
+            "WHERE dh.nguoiDung.id = :userId " +
+            "AND ct.sach.id = :sachId " +
+            "AND dh.trangThai = :trangThai")
+     boolean checkUserPurchasedBook(
+         @Param("userId") Integer userId, 
+         @Param("sachId") Integer sachId, 
+         @Param("trangThai") String trangThai
+     );
 
 	// Đếm số đơn hàng trong khoảng ngày theo trạng thái
 	@Query("SELECT COUNT(d) FROM DonHang d WHERE d.trangThai = :status AND d.ngayDat BETWEEN :from AND :to")
