@@ -94,7 +94,7 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name = "NguoiDung")
+@Table(name = "nguoidung")
 public class NguoiDung {
 
     @Id
