@@ -43,6 +43,8 @@ public class UserController {
 	}
 	@GetMapping("/")
 	public String home( Model model) {
+		System.out.println("MYSQLURL = " + System.getenv("MYSQLURL"));
+		System.out.println("MYSQLPASSWORD = " + System.getenv("MYSQLPASSWORD"));
 	    Page<Sach> featured = sachService.getAllSach(1, 5);
 	    calculatingService.calculateDiscounts(featured);
         calculatingService.calculateRatings(featured);
